@@ -76,7 +76,7 @@
       </div>
 
       <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold gold-text-gradient mb-1 uppercase tracking-tighter">TRIPATI 2026</h2>
+        <h2 class="text-2xl font-bold gold-text-gradient mb-1 uppercase tracking-tighter">TRIPATI 2025</h2>
         <p class="text-gray-400 text-[10px] uppercase tracking-widest">Sistem Seleksi & Evaluasi Terpadu</p>
       </div>
 
@@ -145,7 +145,8 @@
   </div>
 
   <script>
-    // KONFIGURASI API URL (GANTI DENGAN URL APPS SCRIPT ANDA)
+    // KONFIGURASI API URL (Menggunakan URL API backend TRIPATI Anda)
+    // PENTING: Backend (kode_2.gs Anda) HARUS diubah agar membaca dari SPREADSHEET_ID Bhinnekastra
     const API_URL = "https://script.google.com/macros/s/AKfycbyCGN5P5kqs-e7AuRVgbUKxtXflsjLR5PCPDs5AbgGywPvhJfxzlBmnhKrz-0lq6Tlq/exec"; 
 
     // FUNGSI GANTI TAB
@@ -191,12 +192,14 @@
 
       Swal.fire({
         title: 'Memproses Login...',
-        text: 'Mohon tunggu sebentar',
+        text: 'Mencocokkan data dengan Database Bhinnekastra...',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
         background: '#1F2937', color: '#fff'
       });
 
+      // Fetch request ke Backend. 
+      // Pastikan fungsi login() di backend (kode_2.gs) Anda membaca dari Sheet Bhinnekastra
       fetch(API_URL, {
         method: "POST",
         body: JSON.stringify({
@@ -208,7 +211,7 @@
       .then(res => res.json())
       .then(response => {
           if (response.success) {
-            // Simpan Session ID
+            // Simpan Session ID (dan mungkin data user lainnya jika dibutuhkan di Home.html)
             sessionStorage.setItem('sessionId', response.sessionId);
             
             Swal.fire({
