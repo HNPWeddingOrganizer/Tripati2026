@@ -149,6 +149,33 @@
     // PENTING: Backend (kode_2.gs Anda) HARUS diubah agar membaca dari SPREADSHEET_ID Bhinnekastra
     const API_URL = "https://script.google.com/macros/s/AKfycbyCGN5P5kqs-e7AuRVgbUKxtXflsjLR5PCPDs5AbgGywPvhJfxzlBmnhKrz-0lq6Tlq/exec"; 
 
+    // DETEKSI AUTO-LOGIN (SSO) DARI BHINNEKASTRA
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const ssoToken = urlParams.get('sso');
+        
+        if (ssoToken) {
+            try {
+                // Dekode Base64 token
+                const decoded = atob(ssoToken);
+                const [nik, password] = decoded.split('|||');
+                
+                if (nik && password) {
+                    // Isi form secara otomatis
+                    document.getElementById('logNik').value = nik;
+                    document.getElementById('logPass').value = password;
+                    
+                    // Panggil event submit pada form login secara otomatis
+                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                    
+                    // Hapus parameter dari URL agar lebih rapi (opsional)
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch (e) {
+                console.error("SSO Error: Token tidak valid.");
+            }
+        }
+    });
     // FUNGSI GANTI TAB
     function switchTab(mode) {
       const loginSec = document.getElementById('loginSection');
