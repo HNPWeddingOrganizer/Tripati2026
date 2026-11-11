@@ -175,6 +175,15 @@
             .catch(() => window.location.href = "index.html");
         };
 
+        function shuffleArray(array) {
+            let idx = array.length, rndIdx;
+            while (idx != 0) {
+                rndIdx = Math.floor(Math.random() * idx); idx--;
+                [array[idx], array[rndIdx]] = [array[rndIdx], array[idx]];
+            }
+            return array;
+        }
+
         function mulaiUjian() {
             const storageKey = 'examState_' + selectedExamType;
             const savedState = JSON.parse(sessionStorage.getItem(storageKey));
@@ -202,6 +211,18 @@
                 }
                 
                 soalData = soalRes.data;
+                
+                // PERBAIKAN: Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
+                soalData.forEach(soal => {
+                    let opsiArray = [];
+                    if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
+                    if (soal.opsiB) opsiArray.push({ key: 'B', teks: soal.opsiB });
+                    if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
+                    if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
+                    
+                    soal.opsiAcak = shuffleArray(opsiArray); // Simpan hasil acak ke dalam soal
+                });
+
                 sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
                 document.getElementById('totalSoal').textContent = soalData.length;
                 document.getElementById('totalSoalNav').textContent = soalData.length;
@@ -282,15 +303,6 @@
             stateSaveInterval = setInterval(saveState, 5000);
         }
 
-        function shuffleArray(array) {
-            let idx = array.length, rndIdx;
-            while (idx != 0) {
-                rndIdx = Math.floor(Math.random() * idx); idx--;
-                [array[idx], array[rndIdx]] = [array[rndIdx], array[idx]];
-            }
-            return array;
-        }
-
         function tampilkanSoal(index) {
             if (index < 0 || index >= soalData.length || !soalData[index]) return;
             if (window.innerWidth < 768) closeSidebar();
@@ -306,16 +318,10 @@
 
             kontenSoal.innerHTML += `<div class="flex items-start gap-3 text-gray-100"><div class="bg-yellow-400/20 rounded-lg p-2 mt-1 shrink-0"><svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><p class="text-xl text-gray-100 leading-relaxed flex-1">${soal.pertanyaan}</p></div>`;
 
-            let opsiArray = [];
-            if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
-            if (soal.opsiB) opsiArray.push({ key: 'B', teks: soal.opsiB });
-            if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
-            if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
-            
-            opsiArray = shuffleArray(opsiArray);
             const hurufTampil = ['A', 'B', 'C', 'D'];
 
-            opsiArray.forEach((opsi, i) => {
+            // PERBAIKAN: Gunakan opsiAcak yang sudah disimpan, jangan panggil shuffleArray lagi
+            soal.opsiAcak.forEach((opsi, i) => {
                 const displayKonten = isImageUrl(opsi.teks) ? `<img src="${opsi.teks}" class="max-h-32 w-auto rounded-md border border-gray-700 ml-2">` : `<span class="flex-1 text-gray-200">${opsi.teks}</span>`;
                 const isChecked = String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim();
                 
@@ -324,9 +330,16 @@
                 div.innerHTML = `<label class="flex items-start cursor-pointer w-full"><input type="radio" name="jawaban" value="${opsi.key}" ${isChecked ? 'checked' : ''} class="mt-1 mr-4 w-5 h-5 text-yellow-600 focus:ring-2 focus:ring-yellow-500 shrink-0"><div class="flex items-center gap-3 w-full"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-bold shrink-0 ${isChecked ? 'gold-gradient-bg text-gray-900' : 'bg-gray-600 text-gray-200 group-hover:bg-yellow-800'}">${hurufTampil[i]}</span>${displayKonten}</div></label>`;
                 
                 div.addEventListener('click', e => { 
-                    if (e.target.tagName !== 'INPUT') { div.querySelector('input').checked = true; simpanJawaban(opsi.key); tampilkanSoal(currentIndex); } 
+                    if (e.target.tagName !== 'INPUT') { 
+                        div.querySelector('input').checked = true; 
+                        simpanJawaban(opsi.key); 
+                        tampilkanSoal(currentIndex); 
+                    } 
                 });
-                div.querySelector('input').addEventListener('change', () => { simpanJawaban(opsi.key); tampilkanSoal(currentIndex); });
+                div.querySelector('input').addEventListener('change', () => { 
+                    simpanJawaban(opsi.key); 
+                    tampilkanSoal(currentIndex); 
+                });
                 pilihanContainer.appendChild(div);
             });
 
