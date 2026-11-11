@@ -10,9 +10,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Poppins', sans-serif; background: #1A1A1A; color: #FFF; overflow-x: hidden; }
-        
         .gold-gradient-bg { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); }
-        
         .sidebar-scrollbar::-webkit-scrollbar { width: 6px; }
         .sidebar-scrollbar::-webkit-scrollbar-track { background: #2D2D2D; }
         .sidebar-scrollbar::-webkit-scrollbar-thumb { background: #FFD700; border-radius: 3px; }
@@ -24,7 +22,6 @@
 <body class="bg-[#1A1A1A] min-h-screen text-gray-100">
 
     <div id="examWrapper" class="flex min-h-screen">
-        
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden"></div>
 
         <!-- SIDEBAR UJIAN -->
@@ -78,8 +75,6 @@
             </nav>
 
             <main id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 pb-20 relative">
-                <button id="sidebarExpandBtn" class="hidden fixed top-20 left-4 z-30 gold-gradient-bg hover:opacity-90 text-gray-900 p-3 rounded-lg shadow-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg></button>
-                
                 <div class="px-6 lg:px-8 py-8">
                     <!-- Loader Ujian -->
                     <div id="loaderUjian" class="text-center py-20">
@@ -109,12 +104,6 @@
                     </div>
                 </div>
             </main>
-
-            <footer class="absolute bottom-0 w-full backdrop-blur-xl bg-gray-900/60 border-t border-yellow-700/20 shadow-inner h-12 flex items-center justify-between px-6 text-sm text-gray-500">
-                <div class="flex items-center gap-2"><div class="bg-gray-800 rounded-lg p-1.5"><svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div><span id="labelJenisUjian">UJIAN</span></div>
-                <p>&copy; <span id="currentYear">2025</span> DPPI KOTA YOGYAKARTA</p>
-                <div class="flex items-center gap-2 text-xs"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span>Terhubung</span></div>
-            </footer>
         </div>
     </div>
 
@@ -134,7 +123,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxWtMlVk16p6QlaKB0cWjfuPkC92TWuyoTduHAls7JS1gyj6RuKJht44Q0Qag0N2yTG/exec"; // GANTI DENGAN URL API VERCEL ANDA
+        // PASTIKAN API_URL INI ADALAH HASIL DEPLOY "NEW VERSION" TERBARU ANDA
+        const API_URL = "https://script.google.com/macros/s/AKfycbw_Qk74DlRYK3Ihh2RWq0VtlzQr4STMeoG2h64ZnoXvWKhGg1PCP_ap0qgik4czsM9j/exec"; 
         
         const urlParams = new URLSearchParams(window.location.search);
         const selectedExamType = urlParams.get('jenis') || 'PIP';
@@ -142,20 +132,16 @@
 
         let user = {};
         let isExamActive = true;
-        let soalData = [], currentIndex = 0, jawabanPeserta = {}, sisaDetik = 0, timerInterval, stateSaveInterval;
-        let ujianTelahDisubmit = false, sidebarCollapsed = false;
+        let soalData = [], currentIndex = 0, jawabanPeserta = {}, sisaDetik = 0, timerInterval;
+        let ujianTelahDisubmit = false;
 
         window.onload = function() {
-            document.getElementById('currentYear').textContent = new Date().getFullYear();
             const sid = sessionStorage.getItem('sessionId');
-            
-            // Proteksi: Harus login dan bawa NIK & Jenis di URL
             if(!sid || !urlNik) return window.location.href = "index.html";
 
             document.title = `Ujian ${selectedExamType} - Sistem CAT`;
             document.getElementById('labelJenisUjian').innerText = `UJIAN ${selectedExamType}`;
 
-            // Tarik Session
             fetch(API_URL, {
                 method: "POST",
                 body: JSON.stringify({ action: "getUserSession", sessionId: sid })
@@ -166,8 +152,7 @@
                     user = res.data;
                     document.getElementById('namaPeserta').textContent = user.nama || '-';
                     document.getElementById('noPesertaDisplay').textContent = 'No. Peserta: ' + (user.nik || '-');
-                    
-                    mulaiUjian(); // Panggil fungsi utama
+                    mulaiUjian();
                 } else {
                     window.location.href = "index.html";
                 }
@@ -188,17 +173,19 @@
             const storageKey = 'examState_' + selectedExamType;
             const savedState = JSON.parse(sessionStorage.getItem(storageKey));
             
-            if (savedState) {
-                jawabanPeserta = savedState.jawabanPeserta || {};
+            if (savedState && savedState.jawabanPeserta) {
+                jawabanPeserta = savedState.jawabanPeserta;
                 currentIndex = savedState.currentIndex || 0;
             }
 
             Promise.all([
                 fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getWaktuUjian" }) }).then(r => r.json()),
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "loadSoal", jenis: selectedExamType }) }).then(r => r.json()),
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getStoredAnswers", nik: user.nik, jenis: selectedExamType }) }).then(r => r.json())
+                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "loadSoal", jenis: selectedExamType }) }).then(r => r.json())
             ])
-            .then(([waktuRes, soalRes, savedRes]) => {
+            .then(([waktuRes, soalRes]) => {
+                // 1. Sembunyikan loader TERLEBIH DAHULU agar tampilan tidak macet
+                document.getElementById('loaderUjian').classList.add('hidden');
+
                 if (savedState && savedState.sisaDetik > 0) {
                     startTimer(savedState.sisaDetik);
                 } else {
@@ -206,139 +193,95 @@
                     startTimer(w * 60);
                 }
 
+                // 2. Jika API merespon dengan error, munculkan popup dan hentikan proses
                 if (soalRes.error || !soalRes.success) { 
-                    Swal.fire('Error Soal', soalRes.message || 'Gagal memuat soal', 'error'); return; 
+                    Swal.fire('Error Soal', soalRes.message || 'Gagal memuat soal. Pastikan tab "soal" ada di database Anda.', 'error'); 
+                    return; 
                 }
                 
+                // 3. Tampilkan kontainer UI jika semua sukses
+                document.getElementById('ujianContentBox').classList.remove('hidden');
+                document.getElementById('navigasiBawah').classList.remove('hidden');
+                document.getElementById('navigasiBawah').classList.add('flex');
+
                 soalData = soalRes.data;
-                
-                // PERBAIKAN: Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
                 soalData.forEach(soal => {
                     let opsiArray = [];
                     if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
                     if (soal.opsiB) opsiArray.push({ key: 'B', teks: soal.opsiB });
                     if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
                     if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
-                    
-                    soal.opsiAcak = shuffleArray(opsiArray); // Simpan hasil acak ke dalam soal
+                    soal.opsiAcak = shuffleArray(opsiArray);
                 });
 
-                sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
                 document.getElementById('totalSoal').textContent = soalData.length;
                 document.getElementById('totalSoalNav').textContent = soalData.length;
                 
-                document.getElementById('loaderUjian').classList.add('hidden');
-                document.getElementById('ujianContentBox').classList.remove('hidden');
-                document.getElementById('navigasiBawah').classList.remove('hidden');
-                document.getElementById('navigasiBawah').classList.add('flex');
-
-                if (savedRes && savedRes.success && savedRes.data && Object.keys(savedRes.data).length > 0) {
-                    const toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#1F2937', color: '#fff' });
-                    jawabanPeserta = { ...jawabanPeserta, ...savedRes.data };
-                    toast.fire({ icon: 'success', title: 'Jawaban tersimpan berhasil dimuat.' });
-                }
-
                 renderPetaSoal();
                 tampilkanSoal(currentIndex);
-                saveState();
                 updateProgressCount();
             })
             .catch(err => {
-                Swal.fire('Error', 'Terjadi kesalahan sistem: ' + err.message, 'error');
+                // Sembunyikan loader jika koneksi internet terputus atau API bermasalah
+                document.getElementById('loaderUjian').classList.add('hidden');
+                Swal.fire('Error Koneksi', 'Terjadi kesalahan sistem: ' + err.message, 'error');
             });
         }
 
-        // ==========================================
-        // LOGIKA RUANG UJIAN (SIDEBAR, TIMER, SOAL)
-        // ==========================================
-        
-        function isImageUrl(url) {
-            if (typeof url !== 'string' || url.trim() === '') return false;
-            return /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|svg)(\?.*)?$|^https?:\/\/drive\.google\.com\/uc\?id=.*/i.test(url);
-        }
-
-        const sidebarToggle = document.getElementById('sidebarToggle'), sidebar = document.getElementById('sidebar'), sidebarOverlay = document.getElementById('sidebarOverlay'), sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn'), sidebarExpandBtn = document.getElementById('sidebarExpandBtn');
-
-        function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
-        function openSidebar() { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); }
-        
-        function toggleSidebarCollapse() {
-            sidebarCollapsed = !sidebarCollapsed;
-            if (sidebarCollapsed) {
-                sidebar.style.width = '70px'; sidebarExpandBtn.classList.remove('hidden');
-                document.querySelectorAll('.sidebar-text').forEach(el => el.style.display = 'none');
-                document.getElementById('sidebarLegend').style.display = 'none';
-                document.getElementById('petaSoal').style.gridTemplateColumns = '1fr';
-                sidebarCollapseBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>';
-            } else {
-                sidebar.style.width = '280px'; sidebarExpandBtn.classList.add('hidden');
-                document.querySelectorAll('.sidebar-text').forEach(el => el.style.display = '');
-                document.getElementById('sidebarLegend').style.display = '';
-                document.getElementById('petaSoal').style.gridTemplateColumns = 'repeat(4, 1fr)';
-                sidebarCollapseBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>';
-            }
-        }
-
-        sidebarToggle.addEventListener('click', openSidebar); sidebarOverlay.addEventListener('click', closeSidebar);
-        sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse); sidebarExpandBtn.addEventListener('click', toggleSidebarCollapse);
-
         function saveState() { 
             const storageKey = 'examState_' + selectedExamType;
-            if (soalData.length > 0) sessionStorage.setItem(storageKey, JSON.stringify({ jawabanPeserta, sisaDetik, currentIndex })); 
+            sessionStorage.setItem(storageKey, JSON.stringify({ jawabanPeserta, sisaDetik, currentIndex })); 
         }
 
         function startTimer(waktuAwalDetik) {
             sisaDetik = waktuAwalDetik;
             if (timerInterval) clearInterval(timerInterval);
-            if (stateSaveInterval) clearInterval(stateSaveInterval);
             
             timerInterval = setInterval(() => {
                 sisaDetik--;
                 const jam = Math.floor(sisaDetik / 3600), menit = Math.floor((sisaDetik % 3600) / 60), detik = sisaDetik % 60;
                 document.getElementById('timer').textContent = `${String(jam).padStart(2, '0')}:${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
                 
-                if (sisaDetik <= 300) { document.getElementById('timer').classList.add('text-red-500', 'animate-pulse'); }
                 if (sisaDetik <= 0 && !ujianTelahDisubmit) submitUjian('Waktu Habis!');
             }, 1000);
-            stateSaveInterval = setInterval(saveState, 5000);
         }
 
         function tampilkanSoal(index) {
             if (index < 0 || index >= soalData.length || !soalData[index]) return;
-            if (window.innerWidth < 768) closeSidebar();
             currentIndex = index;
-            const soal = soalData[index], kontenSoal = document.getElementById('kontenSoal'), pilihanContainer = document.getElementById('pilihanContainer');
-            kontenSoal.innerHTML = ''; pilihanContainer.innerHTML = '';
+            const soal = soalData[index];
+            const kontenSoal = document.getElementById('kontenSoal');
+            const pilihanContainer = document.getElementById('pilihanContainer');
+            
+            kontenSoal.innerHTML = ''; 
+            pilihanContainer.innerHTML = '';
 
-            if (isImageUrl(soal.gambar)) {
-                const img = document.createElement('img'); img.src = soal.gambar; img.alt = 'Gambar Soal ' + soal.no;
-                img.classList.add('max-w-full', 'h-auto', 'mx-auto', 'rounded-xl', 'shadow-xl', 'mb-6', 'border', 'border-yellow-700/50');
-                kontenSoal.appendChild(img);
+            // Render pertanyaan dan gambar (jika ada)
+            let htmlSoal = `<div class="flex flex-col items-start gap-3 text-gray-100"><p class="text-xl leading-relaxed w-full">${soal.pertanyaan}</p>`;
+            
+            if (soal.gambar && soal.gambar.trim() !== '') {
+                htmlSoal += `<img src="${soal.gambar}" alt="Gambar Soal" class="max-w-full rounded-xl border border-gray-700 my-4 max-h-64 object-contain shadow-lg" loading="lazy">`;
             }
-
-            kontenSoal.innerHTML += `<div class="flex items-start gap-3 text-gray-100"><div class="bg-yellow-400/20 rounded-lg p-2 mt-1 shrink-0"><svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><p class="text-xl text-gray-100 leading-relaxed flex-1">${soal.pertanyaan}</p></div>`;
+            
+            htmlSoal += `</div>`;
+            kontenSoal.innerHTML = htmlSoal;
 
             const hurufTampil = ['A', 'B', 'C', 'D'];
-
-            // PERBAIKAN: Gunakan opsiAcak yang sudah disimpan, jangan panggil shuffleArray lagi
             soal.opsiAcak.forEach((opsi, i) => {
-                const displayKonten = isImageUrl(opsi.teks) ? `<img src="${opsi.teks}" class="max-h-32 w-auto rounded-md border border-gray-700 ml-2">` : `<span class="flex-1 text-gray-200">${opsi.teks}</span>`;
                 const isChecked = String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim();
                 
                 const div = document.createElement('div');
                 div.className = 'group border-2 rounded-xl p-4 cursor-pointer transition-all transform hover:scale-[1.01] hover:shadow-lg ' + (isChecked ? 'border-yellow-500 bg-gray-900 shadow-yellow-800/50' : 'border-gray-700 hover:border-yellow-600 bg-gray-700/50');
-                div.innerHTML = `<label class="flex items-start cursor-pointer w-full"><input type="radio" name="jawaban" value="${opsi.key}" ${isChecked ? 'checked' : ''} class="mt-1 mr-4 w-5 h-5 text-yellow-600 focus:ring-2 focus:ring-yellow-500 shrink-0"><div class="flex items-center gap-3 w-full"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-bold shrink-0 ${isChecked ? 'gold-gradient-bg text-gray-900' : 'bg-gray-600 text-gray-200 group-hover:bg-yellow-800'}">${hurufTampil[i]}</span>${displayKonten}</div></label>`;
+                div.innerHTML = `<label class="flex items-start cursor-pointer w-full"><input type="radio" name="jawaban" value="${opsi.key}" ${isChecked ? 'checked' : ''} class="mt-1 mr-4 w-5 h-5 text-yellow-600 focus:ring-2 focus:ring-yellow-500 shrink-0"><div class="flex items-center gap-3 w-full"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-bold shrink-0 ${isChecked ? 'gold-gradient-bg text-gray-900' : 'bg-gray-600 text-gray-200 group-hover:bg-yellow-800'}">${hurufTampil[i]}</span><span class="flex-1 text-gray-200">${opsi.teks}</span></div></label>`;
                 
                 div.addEventListener('click', e => { 
                     if (e.target.tagName !== 'INPUT') { 
                         div.querySelector('input').checked = true; 
-                        simpanJawaban(opsi.key); 
-                        tampilkanSoal(currentIndex); 
+                        simpanJawaban(soal.no, opsi.key); 
                     } 
                 });
                 div.querySelector('input').addEventListener('change', () => { 
-                    simpanJawaban(opsi.key); 
-                    tampilkanSoal(currentIndex); 
+                    simpanJawaban(soal.no, opsi.key); 
                 });
                 pilihanContainer.appendChild(div);
             });
@@ -347,29 +290,36 @@
             updateStatusJawaban(); updateNavigasi(); updatePetaSoal();
         }
 
-        function simpanJawaban(jawaban) {
-            const soal = soalData[currentIndex];
-            jawabanPeserta[soal.no] = jawaban;
-            updateStatusJawaban(); updatePetaSoal(); updateProgressCount(); saveState();
+        function simpanJawaban(nomorSoal, jawaban) {
+            jawabanPeserta[nomorSoal] = jawaban;
+            updateStatusJawaban(); 
+            updatePetaSoal(); 
+            updateProgressCount(); 
+            saveState();
         }
 
         function submitUjian(alasan = "Ujian Selesai") {
             if (ujianTelahDisubmit) return;
-            ujianTelahDisubmit = true; clearInterval(timerInterval); clearInterval(stateSaveInterval);
+            ujianTelahDisubmit = true; 
+            clearInterval(timerInterval);
             document.getElementById('modalSubmit').classList.add('hidden');
             
             Swal.fire({
-                title: 'Menyimpan Jawaban...', text: 'Mohon tunggu, sistem sedang memproses jawaban Anda.', icon: 'info', 
-                showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' }, 
+                title: 'Menyimpan Jawaban...', text: 'Mohon tunggu, sistem sedang memproses nilai Anda.', icon: 'info', 
+                showConfirmButton: false, allowOutsideClick: false, 
                 didOpen: () => Swal.showLoading()
             });
+
+            const storageKey = 'examState_' + selectedExamType;
+            const currentState = JSON.parse(sessionStorage.getItem(storageKey)) || {};
+            const finalJawaban = Object.keys(jawabanPeserta).length > 0 ? jawabanPeserta : (currentState.jawabanPeserta || {});
 
             fetch(API_URL, {
                 method: "POST",
                 body: JSON.stringify({
                     action: "submitJawaban",
                     nik: user.nik,
-                    jawabanPeserta: jawabanPeserta,
+                    jawabanPeserta: finalJawaban,
                     alasan: alasan,
                     jenis: selectedExamType
                 })
@@ -377,37 +327,40 @@
             .then(r => r.json())
             .then(res => {
                 if (res.success) {
-                    const hasilLengkap = { ...res, jawabanDetail: jawabanPeserta };
+                    const hasilLengkap = { ...res, jawabanDetail: finalJawaban };
                     sessionStorage.setItem('hasilUjian_' + selectedExamType, JSON.stringify(hasilLengkap));
-                    sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
-                    sessionStorage.removeItem('examState_' + selectedExamType);
+                    sessionStorage.removeItem(storageKey);
                     
                     Swal.fire({
-                        title: alasan, text: 'Jawaban Anda telah berhasil disimpan.', icon: 'success', 
-                        confirmButtonText: 'Lihat Hasil & Pembahasan', allowOutsideClick: false,
-                        customClass: { popup: 'bg-gray-800 text-white', confirmButton: 'bg-green-600 hover:bg-green-700 font-bold py-3 px-6 rounded-xl' }
+                        title: alasan, text: 'Nilai Anda telah direkam.', icon: 'success', 
+                        confirmButtonText: 'Lihat Hasil & Pembahasan', allowOutsideClick: false
                     }).then((r) => { 
                         if (r.isConfirmed) {
-                            Swal.fire({ title: 'Memuat Halaman Hasil...', text: 'Mohon tunggu sebentar...', icon: 'info', showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' }, didOpen: () => Swal.showLoading() });
-                            window.location.href = "Hasil.html?jenis=" + selectedExamType + "&nik=" + user.nik;
+                            window.location.href = "Hasil2.html?jenis=" + selectedExamType + "&nik=" + user.nik;
                         }
                     });
                 } else {
                     ujianTelahDisubmit = false; 
-                    Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } });
+                    Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error' });
                 }
             })
             .catch(err => { 
                 ujianTelahDisubmit = false; 
-                Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } }); 
+                Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error' }); 
             });
         }
 
         function updateStatusJawaban() {
             if (!soalData || !soalData[currentIndex]) return;
             const s = document.getElementById('statusJawaban');
-            if (jawabanPeserta[soalData[currentIndex].no]) { s.textContent = '✓ Sudah Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-green-500 text-white'; } 
-            else { s.textContent = 'Belum Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm text-gray-300'; }
+            const soalNo = soalData[currentIndex].no;
+            if (jawabanPeserta[soalNo]) { 
+                s.textContent = '✓ Sudah Dijawab'; 
+                s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-green-500 text-white'; 
+            } else { 
+                s.textContent = 'Belum Dijawab'; 
+                s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm text-gray-300'; 
+            }
         }
 
         function updateNavigasi() {
@@ -433,7 +386,8 @@
         function updatePetaSoal() {
             document.querySelectorAll('#petaSoal button').forEach((btn, i) => {
                 if (!soalData[i]) return;
-                const dijawab = jawabanPeserta[soalData[i].no];
+                const soalNo = soalData[i].no;
+                const dijawab = jawabanPeserta[soalNo];
                 let base = 'w-9 h-9 rounded-lg font-bold transition-all transform hover:scale-110 shadow-sm ';
                 if (dijawab) btn.className = base + 'bg-gradient-to-br from-green-400 to-green-600 text-white hover:opacity-80';
                 else btn.className = base + 'bg-gray-500 text-white hover:bg-gray-400';
@@ -441,7 +395,9 @@
             });
         }
 
-        function updateProgressCount() { document.getElementById('progressCount').textContent = Object.keys(jawabanPeserta).length; }
+        function updateProgressCount() { 
+            document.getElementById('progressCount').textContent = Object.keys(jawabanPeserta).length; 
+        }
 
         document.getElementById('btnPrev').addEventListener('click', () => tampilkanSoal(currentIndex - 1));
         document.getElementById('btnNext').addEventListener('click', () => tampilkanSoal(currentIndex + 1));
@@ -453,50 +409,10 @@
         document.getElementById('btnBatal').addEventListener('click', () => document.getElementById('modalSubmit').classList.add('hidden'));
         document.getElementById('btnKonfirmasi').addEventListener('click', () => submitUjian("Ujian Selesai Manual"));
 
-       // ==========================================
-        // ANTI-CHEAT (Penyempurnaan Deteksi)
-        // ==========================================
+        // Proteksi Tab Aktif
         document.addEventListener('visibilitychange', function () { 
             if (isExamActive && document.hidden && !ujianTelahDisubmit) {
                 submitUjian("Sistem Mendeteksi Anda Beralih Tab!"); 
-            }
-        });
-        
-        window.onpopstate = () => history.go(1);
-
-        let initialWidth = window.innerWidth;
-        let initialHeight = window.innerHeight;
-
-        // 1. Tangkap event rotasi layar HP secara eksplisit
-        window.addEventListener('orientationchange', function() {
-            // Beri jeda sebentar agar browser selesai merender ukuran layar baru
-            setTimeout(() => {
-                initialWidth = window.innerWidth;
-                initialHeight = window.innerHeight;
-            }, 500);
-        });
-
-        // 2. Tangkap event perubahan ukuran (resize / split screen)
-        window.addEventListener('resize', function () {
-            if (!isExamActive || ujianTelahDisubmit) return;
-
-            let currentWidth = window.innerWidth;
-            let currentHeight = window.innerHeight;
-
-            // Deteksi apakah perubahan ini karena rotasi layar (Width baru mirip Height lama)
-            // Toleransi 150px karena adanya bar notifikasi/URL di browser HP
-            let isRotation = Math.abs(currentWidth - initialHeight) < 150 || Math.abs(currentHeight - initialWidth) < 150;
-
-            if (isRotation) {
-                // Jika itu rotasi layar, perbarui nilai acuan dan hentikan pengecekan cheat
-                initialWidth = currentWidth;
-                initialHeight = currentHeight;
-                return;
-            }
-
-            // Jika lebar berubah drastis tapi BUKAN karena rotasi, berarti Layar Belah / Split Screen
-            if (Math.abs(currentWidth - initialWidth) > 50) { 
-                submitUjian("Sistem Mendeteksi Penggunaan Layar Belah (Split Screen)!");
             }
         });
     </script>
