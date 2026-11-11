@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Coming Soon - Portal TRIPATI DPPI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+        /* Premium Earthy Palette (Sama dengan konsep utama) */
+        --bg-main: #160F0C; 
+        --glass-bg: rgba(45, 30, 25, 0.4); 
+        --glass-border: rgba(244, 215, 125, 0.15); 
+        --color-primary: #C8963E; 
+        --color-primary-hover: #A87B32;
+        --color-accent: #9D446E; 
+        --text-main: #F4D77D; 
+        --text-muted: #D5B992; 
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden; 
+    }
+
+    /* --- BACKGROUND ANIMATED SHAPES --- */
+    .bg-shapes {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0; overflow: hidden; pointer-events: none;
+    }
+    .shape {
+      position: absolute; border-radius: 50%; filter: blur(80px);
+      opacity: 0.5; animation: float 20s infinite alternate ease-in-out;
+    }
+    .shape-1 { width: 500px; height: 500px; background: rgba(200, 150, 62, 0.25); top: -20%; left: -10%; }
+    .shape-2 { width: 400px; height: 400px; background: rgba(157, 68, 110, 0.25); bottom: -10%; right: -10%; animation-delay: -7s; }
+    .shape-3 { width: 350px; height: 350px; background: rgba(243, 146, 104, 0.2); top: 40%; left: 50%; transform: translate(-50%, -50%); animation-delay: -12s; }
+    
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 40px) scale(1.1); }
+      100% { transform: translate(-40px, 60px) scale(0.9); }
+    }
+
+    /* --- COMING SOON CONTAINER --- */
+    .coming-soon-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      width: 100%; max-width: 440px; margin: 0 20px;
+      padding: 50px 32px; border-radius: 32px; 
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- LOGO & RINGS --- */
+    .logo-wrapper {
+      position: relative;
+      width: 120px; height: 120px;
+      margin: 0 auto 30px auto;
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    .main-logo {
+      width: 90px; height: 90px; border-radius: 50%; object-fit: contain; 
+      background-color: rgba(22, 15, 12, 0.8);
+      border: 1px solid var(--glass-border);
+      padding: 4px; box-shadow: 0 8px 30px rgba(200, 150, 62, 0.3);
+      position: relative; z-index: 2;
+    }
+
+    .rings {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(244, 215, 125, 0.1); 
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+    }
+    .ring-1 { width: 130px; height: 130px; animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    .ring-2 { width: 170px; height: 170px; border-color: rgba(244, 215, 125, 0.05); animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite; animation-delay: 0.5s; }
+    .ring-3 { width: 220px; height: 220px; border-style: dashed; border-color: rgba(244, 215, 125, 0.03); animation: spin-slow 15s linear infinite; }
+
+    @keyframes ping {
+      75%, 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+    }
+    @keyframes spin-slow {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* --- TYPOGRAPHY & ELEMENTS --- */
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #F4D77D, #C8963E);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 100px;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 30%; /* Sesuaikan persentase ini */
+      background: var(--color-primary);
+      border-radius: 100px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(200, 150, 62, 0.5);
+      animation: loadProgress 2s ease-out forwards;
+    }
+
+    @keyframes loadProgress {
+      from { width: 0%; }
+      to { width: 65%; } /* Target persentase */
+    }
+
+    .btn-action {
+      display: inline-block;
+      width: 100%; background: transparent; color: var(--color-primary); 
+      padding: 14px; border-radius: 100px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
+      border: 1px solid var(--color-primary);
+      text-decoration: none;
+    }
+    
+    .btn-action:hover {
+      background: rgba(200, 150, 62, 0.1);
+      box-shadow: 0 0 20px rgba(200, 150, 62, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Shapes (Glassmorphism blobs) -->
+  <div class="bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+  </div>
+
+  <!-- COMING SOON SCREEN -->
+  <div class="coming-soon-container">
+    
+    <div class="logo-wrapper">
+      <div class="rings ring-1"></div>
+      <div class="rings ring-2"></div>
+      <div class="rings ring-3"></div>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" alt="Logo DPPI" class="main-logo" onerror="this.src='https://placehold.co/100/160F0C/F4D77D?text=DPPI'">
+    </div>
+
+    <h1 class="title">Coming Soon</h1>
+    <p class="subtitle">Portal TRIPATI DPPI 2025 sedang dalam tahap pengembangan akhir. Bersiaplah untuk pengalaman manajemen data seleksi yang lebih terintegrasi.</p>
+    
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill"></div>
+    </div>
+    <p class="text-xs text-[var(--color-primary)] font-medium mb-6 animate-pulse">Menyiapkan sistem...</p>
+
+    <!-- Tombol Opsional (bisa diubah link-nya ke halaman utama jika ada) -->
+    <a href="#" class="btn-action" onclick="window.history.back(); return false;">
+      Kembali
+    </a>
+
+  </div>
+
+</body>
+</html>
