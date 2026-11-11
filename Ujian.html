@@ -440,7 +440,9 @@
         document.getElementById('btnBatal').addEventListener('click', () => document.getElementById('modalSubmit').classList.add('hidden'));
         document.getElementById('btnKonfirmasi').addEventListener('click', () => submitUjian("Ujian Selesai Manual"));
 
-       // ANTI-CHEAT 
+       // ==========================================
+        // ANTI-CHEAT (Penyempurnaan Deteksi)
+        // ==========================================
         document.addEventListener('visibilitychange', function () { 
             if (isExamActive && document.hidden && !ujianTelahDisubmit) {
                 submitUjian("Sistem Mendeteksi Anda Beralih Tab!"); 
@@ -449,14 +451,38 @@
         
         window.onpopstate = () => history.go(1);
 
-        // Hanya deteksi perubahan LEBAR (mencegah split screen).
-        // Perubahan TINGGI diabaikan agar scroll di HP tidak menyebabkan Auto Submit.
         let initialWidth = window.innerWidth;
+        let initialHeight = window.innerHeight;
+
+        // 1. Tangkap event rotasi layar HP secara eksplisit
+        window.addEventListener('orientationchange', function() {
+            // Beri jeda sebentar agar browser selesai merender ukuran layar baru
+            setTimeout(() => {
+                initialWidth = window.innerWidth;
+                initialHeight = window.innerHeight;
+            }, 500);
+        });
+
+        // 2. Tangkap event perubahan ukuran (resize / split screen)
         window.addEventListener('resize', function () {
             if (!isExamActive || ujianTelahDisubmit) return;
-            
-            // Toleransi perubahan lebar layar 50px untuk mencegah false alarm
-            if (Math.abs(window.innerWidth - initialWidth) > 50) { 
+
+            let currentWidth = window.innerWidth;
+            let currentHeight = window.innerHeight;
+
+            // Deteksi apakah perubahan ini karena rotasi layar (Width baru mirip Height lama)
+            // Toleransi 150px karena adanya bar notifikasi/URL di browser HP
+            let isRotation = Math.abs(currentWidth - initialHeight) < 150 || Math.abs(currentHeight - initialWidth) < 150;
+
+            if (isRotation) {
+                // Jika itu rotasi layar, perbarui nilai acuan dan hentikan pengecekan cheat
+                initialWidth = currentWidth;
+                initialHeight = currentHeight;
+                return;
+            }
+
+            // Jika lebar berubah drastis tapi BUKAN karena rotasi, berarti Layar Belah / Split Screen
+            if (Math.abs(currentWidth - initialWidth) > 50) { 
                 submitUjian("Sistem Mendeteksi Penggunaan Layar Belah (Split Screen)!");
             }
         });
