@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,43 +10,94 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Poppins', sans-serif; background: #1A1A1A; color: #FFF; overflow-x: hidden; }
-        
-        .gold-gradient-bg { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); }
-        
-        .sidebar-scrollbar::-webkit-scrollbar { width: 6px; }
-        .sidebar-scrollbar::-webkit-scrollbar-track { background: #2D2D2D; }
-        .sidebar-scrollbar::-webkit-scrollbar-thumb { background: #FFD700; border-radius: 3px; }
-        #pilihanContainer input[type="radio"] { accent-color: #FFD700; }
-        #petaSoal button.bg-gradient-to-br { background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%); color: white; }
-        #petaSoal button.ring-4 { background: #3b82f6 !important; color: white; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #1A1A1A;
+            color: #FFF;
+            overflow-x: hidden;
+        }
+
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+        }
+
+        .sidebar-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-scrollbar::-webkit-scrollbar-track {
+            background: #2D2D2D;
+        }
+
+        .sidebar-scrollbar::-webkit-scrollbar-thumb {
+            background: #FFD700;
+            border-radius: 3px;
+        }
+
+        #pilihanContainer input[type="radio"] {
+            accent-color: #FFD700;
+        }
+
+        #petaSoal button.bg-gradient-to-br {
+            background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
+            color: white;
+        }
+
+        #petaSoal button.ring-4 {
+            background: #3b82f6 !important;
+            color: white;
+        }
     </style>
 </head>
+
 <body class="bg-[#1A1A1A] min-h-screen text-gray-100">
 
     <div id="examWrapper" class="flex min-h-screen">
-        
+
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden"></div>
 
         <!-- SIDEBAR UJIAN -->
-        <aside id="sidebar" class="bg-gray-900 shadow-2xl flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:h-screen" style="width: 280px;">
+        <aside id="sidebar"
+            class="bg-gray-900 shadow-2xl flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:h-screen"
+            style="width: 280px;">
             <div class="gold-gradient-bg px-6 flex items-center justify-between h-16">
                 <div class="sidebar-content">
                     <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                            </path>
+                        </svg>
                         <span class="sidebar-text">Navigasi Soal</span>
                     </h3>
                 </div>
-                <button id="sidebarCollapseBtn" class="hidden md:block text-gray-900 hover:bg-black/20 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg></button>
+                <button id="sidebarCollapseBtn"
+                    class="hidden md:block text-gray-900 hover:bg-black/20 p-2 rounded-md"><svg class="w-5 h-5"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                    </svg></button>
             </div>
             <div class="flex-1 overflow-y-auto sidebar-scrollbar p-4">
-                <div id="petaSoal" class="grid gap-2 transition-all duration-300" style="grid-template-columns: repeat(4, 1fr);"></div>
+                <div id="petaSoal" class="grid gap-2 transition-all duration-300"
+                    style="grid-template-columns: repeat(4, 1fr);"></div>
             </div>
             <div id="sidebarLegend" class="border-t border-gray-700 p-4 bg-gray-800 sidebar-content">
                 <div class="space-y-2 text-sm">
-                    <div class="flex items-center gap-2"><div class="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg shadow-sm flex-shrink-0"></div><span class="text-gray-400 sidebar-text">Sudah Dijawab</span></div>
-                    <div class="flex items-center gap-2"><div class="w-8 h-8 bg-gray-500 rounded-lg shadow-sm flex-shrink-0"></div><span class="text-gray-400 sidebar-text">Belum Dijawab</span></div>
-                    <div class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-500 rounded-lg shadow-sm ring-2 ring-blue-300 flex-shrink-0"></div><span class="text-gray-400 sidebar-text">Soal Aktif</span></div>
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg shadow-sm flex-shrink-0">
+                        </div><span class="text-gray-400 sidebar-text">Sudah Dijawab</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-gray-500 rounded-lg shadow-sm flex-shrink-0"></div><span
+                            class="text-gray-400 sidebar-text">Belum Dijawab</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg shadow-sm ring-2 ring-blue-300 flex-shrink-0"></div>
+                        <span class="text-gray-400 sidebar-text">Soal Aktif</span>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -56,21 +108,43 @@
                 <div class="absolute inset-0 gold-gradient-bg opacity-80"></div>
                 <div class="relative container mx-auto px-6 h-full flex justify-between items-center">
                     <div class="flex items-center gap-2">
-                        <button id="sidebarToggle" class="md:hidden text-gray-900 p-2 rounded-xl hover:bg-black/20"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
+                        <button id="sidebarToggle" class="md:hidden text-gray-900 p-2 rounded-xl hover:bg-black/20"><svg
+                                class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg></button>
                         <div>
                             <h1 class="text-base md:text-lg font-bold text-gray-900" id="namaPeserta">Memuat...</h1>
                             <p class="text-xs text-gray-800" id="noPesertaDisplay">Loading...</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 md:gap-3">
-                        <div class="hidden md:flex items-center gap-2 bg-gray-900/30 backdrop-blur-lg rounded-xl px-3 py-2 shadow-xl ring-1 ring-yellow-600">
-                            <div class="gold-gradient-bg rounded-lg p-1.5 shadow-inner"><svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                            <div><p class="text-xs text-gray-800 font-medium">Progress</p><p class="text-base font-extrabold text-gray-900"><span id="progressCount">0</span>/<span id="totalSoalNav">0</span></p></div>
+                        <div
+                            class="hidden md:flex items-center gap-2 bg-gray-900/30 backdrop-blur-lg rounded-xl px-3 py-2 shadow-xl ring-1 ring-yellow-600">
+                            <div class="gold-gradient-bg rounded-lg p-1.5 shadow-inner"><svg
+                                    class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg></div>
+                            <div>
+                                <p class="text-xs text-gray-800 font-medium">Progress</p>
+                                <p class="text-base font-extrabold text-gray-900"><span
+                                        id="progressCount">0</span>/<span id="totalSoalNav">0</span></p>
+                            </div>
                         </div>
-                        <div class="bg-gray-900/30 backdrop-blur-lg rounded-xl px-3 py-2 shadow-xl ring-1 ring-yellow-600">
+                        <div
+                            class="bg-gray-900/30 backdrop-blur-lg rounded-xl px-3 py-2 shadow-xl ring-1 ring-yellow-600">
                             <div class="flex items-center gap-2">
-                                <div class="gold-gradient-bg rounded-lg p-1.5 shadow-inner"><svg class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg></div>
-                                <div class="text-center"><p class="text-xs text-gray-800 font-medium leading-none">Sisa Waktu</p><p class="text-lg font-extrabold text-gray-900 tabular-nums leading-tight" id="timer">--:--:--</p></div>
+                                <div class="gold-gradient-bg rounded-lg p-1.5 shadow-inner"><svg
+                                        class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
+                                    </svg></div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-800 font-medium leading-none">Sisa Waktu</p>
+                                    <p class="text-lg font-extrabold text-gray-900 tabular-nums leading-tight"
+                                        id="timer">--:--:--</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -78,12 +152,19 @@
             </nav>
 
             <main id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 pb-20 relative">
-                <button id="sidebarExpandBtn" class="hidden fixed top-20 left-4 z-30 gold-gradient-bg hover:opacity-90 text-gray-900 p-3 rounded-lg shadow-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg></button>
-                
+                <button id="sidebarExpandBtn"
+                    class="hidden fixed top-20 left-4 z-30 gold-gradient-bg hover:opacity-90 text-gray-900 p-3 rounded-lg shadow-lg"><svg
+                        class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                    </svg></button>
+
                 <div class="px-6 lg:px-8 py-8">
                     <!-- Loader Ujian -->
                     <div id="loaderUjian" class="text-center py-20">
-                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
+                        <div
+                            class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4">
+                        </div>
                         <p class="text-yellow-500 font-semibold tracking-widest">Menyiapkan Soal...</p>
                     </div>
 
@@ -91,51 +172,83 @@
                     <div id="ujianContentBox" class="bg-gray-800 rounded-2xl shadow-xl overflow-hidden mb-6 hidden">
                         <div class="gold-gradient-bg px-6 py-4 flex items-center justify-between text-gray-900">
                             <div class="flex items-center gap-3">
-                                <div class="bg-gray-900/10 rounded-lg px-3 py-1 backdrop-blur-sm"><span class="font-bold text-lg">Soal <span id="currentSoalNo">1</span></span></div>
-                                <span class="text-gray-800">dari <span id="totalSoal" class="font-semibold">0</span></span>
+                                <div class="bg-gray-900/10 rounded-lg px-3 py-1 backdrop-blur-sm"><span
+                                        class="font-bold text-lg">Soal <span id="currentSoalNo">1</span></span></div>
+                                <span class="text-gray-800">dari <span id="totalSoal"
+                                        class="font-semibold">0</span></span>
                             </div>
-                            <div id="statusJawaban" class="px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm">Belum Dijawab</div>
+                            <div id="statusJawaban"
+                                class="px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm">
+                                Belum Dijawab</div>
                         </div>
                         <div class="p-8 text-gray-100">
-                            <div id="kontenSoal" class="mb-8"><p class="text-lg">Memuat soal...</p></div>
+                            <div id="kontenSoal" class="mb-8">
+                                <p class="text-lg">Memuat soal...</p>
+                            </div>
                             <div class="space-y-3" id="pilihanContainer"></div>
                         </div>
                     </div>
 
                     <div id="navigasiBawah" class="flex gap-4 justify-center hidden">
-                        <button id="btnPrev" disabled class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-5 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">Sebelumnya</button>
-                        <button id="btnNext" class="gold-gradient-bg text-gray-900 font-bold py-3 px-5 rounded-xl transition-all transform hover:scale-105">Berikutnya</button>
-                        <button id="btnSubmit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-5 rounded-xl transition-all transform hover:scale-105 hidden">Selesai Ujian</button>
+                        <button id="btnPrev" disabled
+                            class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-5 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">Sebelumnya</button>
+                        <button id="btnNext"
+                            class="gold-gradient-bg text-gray-900 font-bold py-3 px-5 rounded-xl transition-all transform hover:scale-105">Berikutnya</button>
+                        <button id="btnSubmit"
+                            class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-5 rounded-xl transition-all transform hover:scale-105 hidden">Selesai
+                            Ujian</button>
                     </div>
                 </div>
             </main>
 
-            <footer class="absolute bottom-0 w-full backdrop-blur-xl bg-gray-900/60 border-t border-yellow-700/20 shadow-inner h-12 flex items-center justify-between px-6 text-sm text-gray-500">
-                <div class="flex items-center gap-2"><div class="bg-gray-800 rounded-lg p-1.5"><svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div><span id="labelJenisUjian">UJIAN</span></div>
+            <footer
+                class="absolute bottom-0 w-full backdrop-blur-xl bg-gray-900/60 border-t border-yellow-700/20 shadow-inner h-12 flex items-center justify-between px-6 text-sm text-gray-500">
+                <div class="flex items-center gap-2">
+                    <div class="bg-gray-800 rounded-lg p-1.5"><svg class="w-4 h-4 text-yellow-400" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg></div><span id="labelJenisUjian">UJIAN</span>
+                </div>
                 <p>&copy; <span id="currentYear">2025</span> DPPI KOTA YOGYAKARTA</p>
-                <div class="flex items-center gap-2 text-xs"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span>Terhubung</span></div>
+                <div class="flex items-center gap-2 text-xs">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span>Terhubung</span>
+                </div>
             </footer>
         </div>
     </div>
 
     <!-- MODAL SUBMIT UJIAN -->
-    <div id="modalSubmit" class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-        <div class="bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all border border-yellow-700">
-            <div class="gold-gradient-bg px-6 py-4"><h3 class="text-xl font-bold text-gray-900">Konfirmasi Submit Ujian</h3></div>
+    <div id="modalSubmit"
+        class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div
+            class="bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all border border-yellow-700">
+            <div class="gold-gradient-bg px-6 py-4">
+                <h3 class="text-xl font-bold text-gray-900">Konfirmasi Submit Ujian</h3>
+            </div>
             <div class="p-6">
-                <div class="bg-yellow-900/30 border-l-4 border-yellow-500 rounded p-4 mb-4"><p class="text-gray-200">Anda menjawab <span id="terjawab" class="font-bold text-green-400 text-xl"></span> dari <span id="totalSoalModal" class="font-bold text-yellow-400 text-xl"></span> soal.</p></div>
-                <p class="text-gray-400 mb-6">Yakin ingin menyelesaikan? Jawaban akan disimpan dan tidak bisa diubah lagi.</p>
+                <div class="bg-yellow-900/30 border-l-4 border-yellow-500 rounded p-4 mb-4">
+                    <p class="text-gray-200">Anda menjawab <span id="terjawab"
+                            class="font-bold text-green-400 text-xl"></span> dari <span id="totalSoalModal"
+                            class="font-bold text-yellow-400 text-xl"></span> soal.</p>
+                </div>
+                <p class="text-gray-400 mb-6">Yakin ingin menyelesaikan? Jawaban akan disimpan dan tidak bisa diubah
+                    lagi.</p>
                 <div class="flex gap-3">
-                    <button id="btnBatal" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-xl transition">Batal</button>
-                    <button id="btnKonfirmasi" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl shadow-lg transition">Ya, Selesai</button>
+                    <button id="btnBatal"
+                        class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-xl transition">Batal</button>
+                    <button id="btnKonfirmasi"
+                        class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl shadow-lg transition">Ya,
+                        Selesai</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyO3gKLXljv7epigUbJEcxBw8YFyqioXUUaM97gNsom7rB9TvC21S3n_6xZyQqysQbB/exec"; // GANTI DENGAN URL API VERCEL ANDA
-        
+        const API_URL = "https://script.google.com/macros/s/AKfycbz_LjAlC49ErfhgGSWI0u2UbZ8Lpyikbxo8hMr435EfinIA5pPxZDws9uaNLrOOfOmb/exec"; // GANTI DENGAN URL API VERCEL ANDA
+
         const urlParams = new URLSearchParams(window.location.search);
         const selectedExamType = urlParams.get('jenis') || 'PIP';
         const urlNik = urlParams.get('nik');
@@ -145,12 +258,12 @@
         let soalData = [], currentIndex = 0, jawabanPeserta = {}, sisaDetik = 0, timerInterval, stateSaveInterval;
         let ujianTelahDisubmit = false, sidebarCollapsed = false;
 
-        window.onload = function() {
+        window.onload = function () {
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             const sid = sessionStorage.getItem('sessionId');
-            
+
             // Proteksi: Harus login dan bawa NIK & Jenis di URL
-            if(!sid || !urlNik) return window.location.href = "index.html";
+            if (!sid || !urlNik) return window.location.href = "index.html";
 
             document.title = `Ujian ${selectedExamType} - Sistem CAT`;
             document.getElementById('labelJenisUjian').innerText = `UJIAN ${selectedExamType}`;
@@ -160,19 +273,19 @@
                 method: "POST",
                 body: JSON.stringify({ action: "getUserSession", sessionId: sid })
             })
-            .then(res => res.json())
-            .then(res => {
-                if(res.success) {
-                    user = res.data;
-                    document.getElementById('namaPeserta').textContent = user.nama || '-';
-                    document.getElementById('noPesertaDisplay').textContent = 'No. Peserta: ' + (user.nik || '-');
-                    
-                    mulaiUjian(); // Panggil fungsi utama
-                } else {
-                    window.location.href = "index.html";
-                }
-            })
-            .catch(() => window.location.href = "index.html");
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        user = res.data;
+                        document.getElementById('namaPeserta').textContent = user.nama || '-';
+                        document.getElementById('noPesertaDisplay').textContent = 'No. Peserta: ' + (user.nik || '-');
+
+                        mulaiUjian(); // Panggil fungsi utama
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                })
+                .catch(() => window.location.href = "index.html");
         };
 
         function shuffleArray(array) {
@@ -187,81 +300,81 @@
         function mulaiUjian() {
             const storageKey = 'examState_' + selectedExamType;
             const savedState = JSON.parse(sessionStorage.getItem(storageKey));
-            
+
             if (savedState) {
                 jawabanPeserta = savedState.jawabanPeserta || {};
                 currentIndex = savedState.currentIndex || 0;
             }
 
             Promise.all([
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getWaktuUjian" }) }).then(r => r.json()),
+                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getWaktuUjian", jenis: selectedExamType }) }).then(r => r.json()),
                 fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "loadSoal", jenis: selectedExamType }) }).then(r => r.json()),
                 fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getStoredAnswers", nik: user.nik, jenis: selectedExamType }) }).then(r => r.json())
             ])
-            .then(([waktuRes, soalRes, savedRes]) => {
-                if (savedState && savedState.sisaDetik > 0) {
-                    startTimer(savedState.sisaDetik);
-                } else {
-                    let w = (waktuRes.success && waktuRes.waktu) ? waktuRes.waktu : 60;
-                    startTimer(w * 60);
-                }
+                .then(([waktuRes, soalRes, savedRes]) => {
+                    if (savedState && savedState.sisaDetik > 0) {
+                        startTimer(savedState.sisaDetik);
+                    } else {
+                        let w = (waktuRes.success && waktuRes.waktu) ? waktuRes.waktu : 60;
+                        startTimer(w * 60);
+                    }
 
-                if (soalRes.error || !soalRes.success) { 
-                    Swal.fire('Error Soal', soalRes.message || 'Gagal memuat soal', 'error'); return; 
-                }
-                
-                soalData = soalRes.data;
-                
-                // PERBAIKAN: Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
-                soalData.forEach(soal => {
-                    let opsiArray = [];
-                    if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
-                    if (soal.opsiB) opsiArray.push({ key: 'B', teks: soal.opsiB });
-                    if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
-                    if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
-                    
-                    soal.opsiAcak = shuffleArray(opsiArray); // Simpan hasil acak ke dalam soal
+                    if (soalRes.error || !soalRes.success) {
+                        Swal.fire('Error Soal', soalRes.message || 'Gagal memuat soal', 'error'); return;
+                    }
+
+                    soalData = soalRes.data;
+
+                    // PERBAIKAN: Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
+                    soalData.forEach(soal => {
+                        let opsiArray = [];
+                        if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
+                        if (soal.opsiB) opsiArray.push({ key: 'B', teks: soal.opsiB });
+                        if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
+                        if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
+
+                        soal.opsiAcak = shuffleArray(opsiArray); // Simpan hasil acak ke dalam soal
+                    });
+
+                    sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
+                    document.getElementById('totalSoal').textContent = soalData.length;
+                    document.getElementById('totalSoalNav').textContent = soalData.length;
+
+                    document.getElementById('loaderUjian').classList.add('hidden');
+                    document.getElementById('ujianContentBox').classList.remove('hidden');
+                    document.getElementById('navigasiBawah').classList.remove('hidden');
+                    document.getElementById('navigasiBawah').classList.add('flex');
+
+                    if (savedRes && savedRes.success && savedRes.data && Object.keys(savedRes.data).length > 0) {
+                        const toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#1F2937', color: '#fff' });
+                        jawabanPeserta = { ...jawabanPeserta, ...savedRes.data };
+                        toast.fire({ icon: 'success', title: 'Jawaban tersimpan berhasil dimuat.' });
+                    }
+
+                    renderPetaSoal();
+                    tampilkanSoal(currentIndex);
+                    saveState();
+                    updateProgressCount();
+                })
+                .catch(err => {
+                    Swal.fire('Error', 'Terjadi kesalahan sistem: ' + err.message, 'error');
                 });
-
-                sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
-                document.getElementById('totalSoal').textContent = soalData.length;
-                document.getElementById('totalSoalNav').textContent = soalData.length;
-                
-                document.getElementById('loaderUjian').classList.add('hidden');
-                document.getElementById('ujianContentBox').classList.remove('hidden');
-                document.getElementById('navigasiBawah').classList.remove('hidden');
-                document.getElementById('navigasiBawah').classList.add('flex');
-
-                if (savedRes && savedRes.success && savedRes.data && Object.keys(savedRes.data).length > 0) {
-                    const toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#1F2937', color: '#fff' });
-                    jawabanPeserta = { ...jawabanPeserta, ...savedRes.data };
-                    toast.fire({ icon: 'success', title: 'Jawaban tersimpan berhasil dimuat.' });
-                }
-
-                renderPetaSoal();
-                tampilkanSoal(currentIndex);
-                saveState();
-                updateProgressCount();
-            })
-            .catch(err => {
-                Swal.fire('Error', 'Terjadi kesalahan sistem: ' + err.message, 'error');
-            });
         }
 
         // ==========================================
         // LOGIKA RUANG UJIAN (SIDEBAR, TIMER, SOAL)
         // ==========================================
-        
+
         function isImageUrl(url) {
             if (typeof url !== 'string' || url.trim() === '') return false;
-            return /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|svg)(\?.*)?$|^https?:\/\/drive\.google\.com\/uc\?id=.*/i.test(url);
+            return /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|svg|webp)(\?.*)?$|^https?:\/\/(drive\.google\.com\/(uc|thumbnail)\?|lh3\.googleusercontent\.com\/d\/)/i.test(url.trim());
         }
 
         const sidebarToggle = document.getElementById('sidebarToggle'), sidebar = document.getElementById('sidebar'), sidebarOverlay = document.getElementById('sidebarOverlay'), sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn'), sidebarExpandBtn = document.getElementById('sidebarExpandBtn');
 
         function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
         function openSidebar() { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); }
-        
+
         function toggleSidebarCollapse() {
             sidebarCollapsed = !sidebarCollapsed;
             if (sidebarCollapsed) {
@@ -282,21 +395,21 @@
         sidebarToggle.addEventListener('click', openSidebar); sidebarOverlay.addEventListener('click', closeSidebar);
         sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse); sidebarExpandBtn.addEventListener('click', toggleSidebarCollapse);
 
-        function saveState() { 
+        function saveState() {
             const storageKey = 'examState_' + selectedExamType;
-            if (soalData.length > 0) sessionStorage.setItem(storageKey, JSON.stringify({ jawabanPeserta, sisaDetik, currentIndex })); 
+            if (soalData.length > 0) sessionStorage.setItem(storageKey, JSON.stringify({ jawabanPeserta, sisaDetik, currentIndex }));
         }
 
         function startTimer(waktuAwalDetik) {
             sisaDetik = waktuAwalDetik;
             if (timerInterval) clearInterval(timerInterval);
             if (stateSaveInterval) clearInterval(stateSaveInterval);
-            
+
             timerInterval = setInterval(() => {
                 sisaDetik--;
                 const jam = Math.floor(sisaDetik / 3600), menit = Math.floor((sisaDetik % 3600) / 60), detik = sisaDetik % 60;
                 document.getElementById('timer').textContent = `${String(jam).padStart(2, '0')}:${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
-                
+
                 if (sisaDetik <= 300) { document.getElementById('timer').classList.add('text-red-500', 'animate-pulse'); }
                 if (sisaDetik <= 0 && !ujianTelahDisubmit) submitUjian('Waktu Habis!');
             }, 1000);
@@ -324,21 +437,21 @@
             soal.opsiAcak.forEach((opsi, i) => {
                 const displayKonten = isImageUrl(opsi.teks) ? `<img src="${opsi.teks}" class="max-h-32 w-auto rounded-md border border-gray-700 ml-2">` : `<span class="flex-1 text-gray-200">${opsi.teks}</span>`;
                 const isChecked = String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim();
-                
+
                 const div = document.createElement('div');
                 div.className = 'group border-2 rounded-xl p-4 cursor-pointer transition-all transform hover:scale-[1.01] hover:shadow-lg ' + (isChecked ? 'border-yellow-500 bg-gray-900 shadow-yellow-800/50' : 'border-gray-700 hover:border-yellow-600 bg-gray-700/50');
                 div.innerHTML = `<label class="flex items-start cursor-pointer w-full"><input type="radio" name="jawaban" value="${opsi.key}" ${isChecked ? 'checked' : ''} class="mt-1 mr-4 w-5 h-5 text-yellow-600 focus:ring-2 focus:ring-yellow-500 shrink-0"><div class="flex items-center gap-3 w-full"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-bold shrink-0 ${isChecked ? 'gold-gradient-bg text-gray-900' : 'bg-gray-600 text-gray-200 group-hover:bg-yellow-800'}">${hurufTampil[i]}</span>${displayKonten}</div></label>`;
-                
-                div.addEventListener('click', e => { 
-                    if (e.target.tagName !== 'INPUT') { 
-                        div.querySelector('input').checked = true; 
-                        simpanJawaban(opsi.key); 
-                        tampilkanSoal(currentIndex); 
-                    } 
+
+                div.addEventListener('click', e => {
+                    if (e.target.tagName !== 'INPUT') {
+                        div.querySelector('input').checked = true;
+                        simpanJawaban(opsi.key);
+                        tampilkanSoal(currentIndex);
+                    }
                 });
-                div.querySelector('input').addEventListener('change', () => { 
-                    simpanJawaban(opsi.key); 
-                    tampilkanSoal(currentIndex); 
+                div.querySelector('input').addEventListener('change', () => {
+                    simpanJawaban(opsi.key);
+                    tampilkanSoal(currentIndex);
                 });
                 pilihanContainer.appendChild(div);
             });
@@ -357,10 +470,10 @@
             if (ujianTelahDisubmit) return;
             ujianTelahDisubmit = true; clearInterval(timerInterval); clearInterval(stateSaveInterval);
             document.getElementById('modalSubmit').classList.add('hidden');
-            
+
             Swal.fire({
-                title: 'Menyimpan Jawaban...', text: 'Mohon tunggu, sistem sedang memproses jawaban Anda.', icon: 'info', 
-                showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' }, 
+                title: 'Menyimpan Jawaban...', text: 'Mohon tunggu, sistem sedang memproses jawaban Anda.', icon: 'info',
+                showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' },
                 didOpen: () => Swal.showLoading()
             });
 
@@ -374,39 +487,39 @@
                     jenis: selectedExamType
                 })
             })
-            .then(r => r.json())
-            .then(res => {
-                if (res.success) {
-                    const hasilLengkap = { ...res, jawabanDetail: jawabanPeserta };
-                    sessionStorage.setItem('hasilUjian_' + selectedExamType, JSON.stringify(hasilLengkap));
-                    sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
-                    sessionStorage.removeItem('examState_' + selectedExamType);
-                    
-                    Swal.fire({
-                        title: alasan, text: 'Jawaban Anda telah berhasil disimpan.', icon: 'success', 
-                        confirmButtonText: 'Lihat Hasil & Pembahasan', allowOutsideClick: false,
-                        customClass: { popup: 'bg-gray-800 text-white', confirmButton: 'bg-green-600 hover:bg-green-700 font-bold py-3 px-6 rounded-xl' }
-                    }).then((r) => { 
-                        if (r.isConfirmed) {
-                            Swal.fire({ title: 'Memuat Halaman Hasil...', text: 'Mohon tunggu sebentar...', icon: 'info', showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' }, didOpen: () => Swal.showLoading() });
-                            window.location.href = "Hasil.html?jenis=" + selectedExamType + "&nik=" + user.nik;
-                        }
-                    });
-                } else {
-                    ujianTelahDisubmit = false; 
-                    Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } });
-                }
-            })
-            .catch(err => { 
-                ujianTelahDisubmit = false; 
-                Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } }); 
-            });
+                .then(r => r.json())
+                .then(res => {
+                   if (res.success) {
+                        const hasilLengkap = { ...res, jawabanDetail: jawabanPeserta };
+                        sessionStorage.setItem('peserta', JSON.stringify({ nama: user.nama || '-', noPeserta: user.nik || '-' }));
+                        sessionStorage.setItem('hasilUjian_' + selectedExamType, JSON.stringify(hasilLengkap));
+                        sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
+                        sessionStorage.removeItem('examState_' + selectedExamType);
+                        Swal.fire({
+                            title: alasan, text: 'Jawaban Anda telah berhasil disimpan.', icon: 'success',
+                            confirmButtonText: 'Lihat Hasil & Pembahasan', allowOutsideClick: false,
+                            customClass: { popup: 'bg-gray-800 text-white', confirmButton: 'bg-green-600 hover:bg-green-700 font-bold py-3 px-6 rounded-xl' }
+                        }).then((r) => {
+                            if (r.isConfirmed) {
+                                Swal.fire({ title: 'Memuat Halaman Hasil...', text: 'Mohon tunggu sebentar...', icon: 'info', showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' }, didOpen: () => Swal.showLoading() });
+                                window.location.href = "Hasil.html?jenis=" + selectedExamType + "&nik=" + user.nik;
+                            }
+                        });
+                    } else {
+                        ujianTelahDisubmit = false;
+                        Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } });
+                    }
+                })
+                .catch(err => {
+                    ujianTelahDisubmit = false;
+                    Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } });
+                });
         }
 
         function updateStatusJawaban() {
             if (!soalData || !soalData[currentIndex]) return;
             const s = document.getElementById('statusJawaban');
-            if (jawabanPeserta[soalData[currentIndex].no]) { s.textContent = '✓ Sudah Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-green-500 text-white'; } 
+            if (jawabanPeserta[soalData[currentIndex].no]) { s.textContent = '✓ Sudah Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-green-500 text-white'; }
             else { s.textContent = 'Belum Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm text-gray-300'; }
         }
 
@@ -453,22 +566,22 @@
         document.getElementById('btnBatal').addEventListener('click', () => document.getElementById('modalSubmit').classList.add('hidden'));
         document.getElementById('btnKonfirmasi').addEventListener('click', () => submitUjian("Ujian Selesai Manual"));
 
-       // ==========================================
+        // ==========================================
         // ANTI-CHEAT (Penyempurnaan Deteksi)
         // ==========================================
-        document.addEventListener('visibilitychange', function () { 
+        document.addEventListener('visibilitychange', function () {
             if (isExamActive && document.hidden && !ujianTelahDisubmit) {
-                submitUjian("Sistem Mendeteksi Anda Beralih Tab!"); 
+                submitUjian("Sistem Mendeteksi Anda Beralih Tab!");
             }
         });
-        
+
         window.onpopstate = () => history.go(1);
 
         let initialWidth = window.innerWidth;
         let initialHeight = window.innerHeight;
 
         // 1. Tangkap event rotasi layar HP secara eksplisit
-        window.addEventListener('orientationchange', function() {
+        window.addEventListener('orientationchange', function () {
             // Beri jeda sebentar agar browser selesai merender ukuran layar baru
             setTimeout(() => {
                 initialWidth = window.innerWidth;
@@ -495,10 +608,11 @@
             }
 
             // Jika lebar berubah drastis tapi BUKAN karena rotasi, berarti Layar Belah / Split Screen
-            if (Math.abs(currentWidth - initialWidth) > 50) { 
+            if (Math.abs(currentWidth - initialWidth) > 50) {
                 submitUjian("Sistem Mendeteksi Penggunaan Layar Belah (Split Screen)!");
             }
         });
     </script>
 </body>
+
 </html>
