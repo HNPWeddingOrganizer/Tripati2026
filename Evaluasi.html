@@ -346,7 +346,7 @@
 
   <script>
     // KONFIGURASI API URL (GANTI DENGAN URL APPS SCRIPT ANDA)
-    const API_URL = "https://script.google.com/macros/s/AKfycbzsMctWsuZlAFeLsz-XGyzJe_UjHJVsxWvKkJ9nRJdINsxPokA3Ouu2mbWzmb_-KpUM/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbz_LjAlC49ErfhgGSWI0u2UbZ8Lpyikbxo8hMr435EfinIA5pPxZDws9uaNLrOOfOmb/exec"; 
 
     // Variable global
     let currentData = null;
@@ -379,32 +379,106 @@
     };
 
     // Fungsi khusus bypass password jika dipanggil dari Home (menggunakan fetch)
-    function doLoginBypass(nik, userData) {
-       fetch(API_URL, {
-           method: "POST",
-           body: JSON.stringify({ action: "getDataEvaluasi", nik: nik })
-       })
-       .then(res => res.json())
-       .then(res => {
-          currentData = userData || {}; 
-          const dataNilai = res.data || {}; // Karena struktur return getDataEvaluasi di code.gs adalah res.data
-          
-          currentData.nilai_tiu = checkValue(dataNilai.nilai_tiu, "0");
-          currentData.nilai_pip = checkValue(dataNilai.nilai_pip, "0");
-          currentData.push_up = checkValue(dataNilai.push_up, "0");
-          currentData.sit_up = checkValue(dataNilai.sit_up, "0");
-          currentData.shuttle_run = checkValue(dataNilai.shuttle_run, "0");
-          currentData.eval_pbb = checkValue(dataNilai.eval_pbb, "-");
-
-          renderData();
-          showPage('evalPage'); // Langsung loncat ke halaman hasil (bukan profil)
-       })
-       .catch(err => {
-           resetLoginState();
-           alert("Gagal mengambil data evaluasi.");
-       });
+    // Helper pemetaan lengkap seluruh field nilai & evaluasi fisik dari server
+    function mapNilaiEvaluasi(targetObj, dataNilai) {
+      targetObj.nilai_tiu = checkValue(dataNilai.nilai_tiu, "0");
+      targetObj.nilai_pip = checkValue(dataNilai.nilai_pip, "0");
+      targetObj.push_up = checkValue(dataNilai.push_up, "0");
+      targetObj.eval_push_up = checkValue(dataNilai.eval_push_up, "-");
+      targetObj.sit_up = checkValue(dataNilai.sit_up, "0");
+      targetObj.eval_sit_up = checkValue(dataNilai.eval_sit_up, "-");
+      targetObj.back_up = checkValue(dataNilai.back_up, "0");
+      targetObj.eval_back_up = checkValue(dataNilai.eval_back_up, "-");
+      targetObj.shuttle_run = checkValue(dataNilai.shuttle_run, "0");
+      targetObj.eval_shuttle_run = checkValue(dataNilai.eval_shuttle_run, "-");
+      targetObj.hasil_lari = checkValue(dataNilai.hasil_lari, "0");
+      targetObj.eval_pbb = checkValue(dataNilai.eval_pbb, "Belum ada catatan evaluasi PBB.");
     }
 
+    // Fungsi khusus bypass password jika dipanggil dari Home
+    function doLoginBypass(nik, userData) {
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "getDataEvaluasi", nik: nik })
+      })
+      .then(res => res.json())
+      .then(res => {
+        currentData = userData || {};
+        const dataNilai = res.data || {};
+        mapNilaiEvaluasi(currentData, dataNilai);
+
+        renderData();
+        showPage('evalPage');
+      })
+      .catch(err => {
+        resetLoginState();
+        alert("Gagal mengambil data evaluasi.");
+      });
+    }
+
+    // Logika Login Utama
+    function doLogin() {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const err = document.getElementById('loginErr');
+
+      if (!u || !p) {
+        err.innerText = "USERNAME & PASSWORD WAJIB DIISI";
+        err.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-black" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> MEMVALIDASI...`;
+      err.classList.add('hidden');
+
+      if (loginTimeout) clearTimeout(loginTimeout);
+      loginTimeout = setTimeout(() => {
+        resetLoginState();
+        err.innerText = "KONEKSI TIME-OUT: Data user ini mungkin mengandung format Tanggal/Jam yang tidak bisa dibaca sistem. Harap hubungi admin untuk cek Spreadsheet.";
+        err.classList.remove('hidden');
+      }, 15000);
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "processLogin", username: u, password: p })
+      })
+      .then(res => res.json())
+      .then(res => {
+        clearTimeout(loginTimeout);
+        resetLoginState();
+
+        try {
+          if (res && res.success) {
+            currentData = res.user || {};
+            const dataNilai = res.nilai || {};
+            mapNilaiEvaluasi(currentData, dataNilai);
+
+            renderData();
+            showPage('profilePage');
+          } else {
+            err.innerText = res ? res.message : "Respons server tidak valid/kosong.";
+            err.classList.remove('hidden');
+          }
+        } catch (renderErr) {
+          console.error("Partial Data Render:", renderErr);
+          if (currentData) {
+            renderData();
+            showPage('profilePage');
+          } else {
+            err.innerText = "DATA ERROR: Terjadi kegagalan memproses data akun.";
+            err.classList.remove('hidden');
+          }
+        }
+      })
+      .catch(e => {
+        clearTimeout(loginTimeout);
+        resetLoginState();
+        err.innerText = "KONEKSI SERVER BERMASALAH: " + e.message;
+        err.classList.remove('hidden');
+      });
+    }
     // Fungsi Navigasi Halaman
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -429,82 +503,6 @@
       btn.innerHTML = `<span>MASUK SISTEM</span>`;
     }
 
-    // Logika Login Utama
-    function doLogin() {
-      const u = document.getElementById('username').value;
-      const p = document.getElementById('password').value;
-      const btn = document.getElementById('loginBtn');
-      const err = document.getElementById('loginErr');
-
-      // Validasi Input Kosong
-      if(!u || !p) { 
-        err.innerText = "USERNAME & PASSWORD WAJIB DIISI";
-        err.classList.remove('hidden');
-        return; 
-      }
-
-      // UI Loading
-      btn.disabled = true;
-      btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-black" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> MEMVALIDASI...`;
-      err.classList.add('hidden');
-
-      // --- TIMEOUT SAFETY ---
-      if(loginTimeout) clearTimeout(loginTimeout);
-      loginTimeout = setTimeout(() => {
-        resetLoginState();
-        err.innerText = "KONEKSI TIME-OUT: Data user ini mungkin mengandung format Tanggal/Jam yang tidak bisa dibaca sistem. Harap hubungi admin untuk cek Spreadsheet.";
-        err.classList.remove('hidden');
-      }, 15000); // 15 Detik
-
-      // Panggil Backend API Vercel
-      fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "processLogin", username: u, password: p })
-      })
-      .then(res => res.json())
-      .then(res => {
-        clearTimeout(loginTimeout);
-        resetLoginState();
-        
-        try {
-          if(res && res.success) {
-            // --- SUKSES LOGIN ---
-            currentData = res.user || {}; 
-            const dataNilai = res.nilai || {};
-            
-            // Pastikan nilai default "0" jika null/undefined
-            currentData.nilai_tiu = checkValue(dataNilai.nilai_tiu, "0");
-            currentData.nilai_pip = checkValue(dataNilai.nilai_pip, "0");
-            currentData.push_up = checkValue(dataNilai.push_up, "0");
-            currentData.sit_up = checkValue(dataNilai.sit_up, "0");
-            currentData.shuttle_run = checkValue(dataNilai.shuttle_run, "0");
-            currentData.eval_pbb = checkValue(dataNilai.eval_pbb, "-");
-
-            renderData();
-            showPage('profilePage');
-          } else {
-            // --- GAGAL LOGIN ---
-            err.innerText = res ? res.message : "Respons server tidak valid/kosong.";
-            err.classList.remove('hidden');
-          }
-        } catch (renderErr) {
-          console.error("Partial Data Render:", renderErr);
-          if(currentData) {
-              renderData();
-              showPage('profilePage');
-          } else {
-            err.innerText = "DATA ERROR: Terjadi kegagalan memproses data akun.";
-            err.classList.remove('hidden');
-          }
-        }
-      })
-      .catch(e => {
-        clearTimeout(loginTimeout);
-        resetLoginState();
-        err.innerText = "KONEKSI SERVER BERMASALAH: " + e.message;
-        err.classList.remove('hidden');
-      });
-    }
 
     /**
      * FUNGSI PENGAMAN NILAI (SAFE GUARD)
