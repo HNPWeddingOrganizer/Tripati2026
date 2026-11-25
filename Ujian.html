@@ -34,7 +34,7 @@
             overflow-x: hidden;
         }
 
-        /* --- BACKGROUND ANIMATED SHAPES (Lebih lembut agar nyaman dibaca) --- */
+        /* --- BACKGROUND ANIMATED SHAPES --- */
         .bg-shapes {
             position: fixed;
             inset: 0;
@@ -573,8 +573,8 @@
                 </div>
                 <p class="hidden sm:block text-[11px] tracking-wide">&copy; <span id="currentYear">2026</span> DPPI KOTA YOGYAKARTA</p>
                 <div class="flex items-center gap-2 text-[11px]">
-                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
-                    <span class="text-emerald-300/90 font-medium">Terhubung</span>
+                    <div id="syncDot" class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                    <span id="syncStatusText" class="text-emerald-300/90 font-medium">Terhubung</span>
                 </div>
             </footer>
         </div>
@@ -621,7 +621,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec"; // GANTI DENGAN URL API VERCEL ANDA
+        const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const selectedExamType = urlParams.get('jenis') || 'PIP';
@@ -631,6 +631,7 @@
         let isExamActive = true;
         let soalData = [], currentIndex = 0, jawabanPeserta = {}, sisaDetik = 0, timerInterval, stateSaveInterval;
         let ujianTelahDisubmit = false, sidebarCollapsed = false;
+        let serverSyncTimer = null;
 
         // Pengaturan ukuran font baca (0: Standar, 1: Besar, 2: Ekstra Besar)
         let fontLevel = 0;
@@ -641,6 +642,146 @@
             fontLevel = Math.max(0, Math.min(2, fontLevel + delta));
             if (soalData.length > 0) tampilkanSoal(currentIndex, false);
         }
+
+        // ==========================================
+        // PERSISTENSI JAWABAN (TAHAN LOGOUT & RELOAD)
+        // ==========================================
+        function getPersistentStorageKey() {
+            const nikKey = String(user.nik || urlNik || 'guest').trim();
+            return `tripati_examState_${selectedExamType}_${nikKey}`;
+        }
+
+        function cleanAnswersMap(rawObj) {
+            const cleaned = {};
+            if (!rawObj || typeof rawObj !== 'object') return cleaned;
+            Object.entries(rawObj).forEach(([k, v]) => {
+                if (v !== null && v !== undefined && String(v).trim() !== '') {
+                    cleaned[String(k)] = String(v).trim();
+                }
+            });
+            return cleaned;
+        }
+
+        function getAnsweredCount() {
+            return Object.values(jawabanPeserta).filter(v => v !== null && v !== undefined && String(v).trim() !== '').length;
+        }
+
+        function loadLocalSavedState() {
+            const key = getPersistentStorageKey();
+            try {
+                // Prioritaskan localStorage (tidak terhapus saat logout / tutup browser)
+                const localRaw = localStorage.getItem(key);
+                if (localRaw) return JSON.parse(localRaw);
+
+                // Fallback ke sessionStorage jika ada sisa state lama
+                const sessionRaw = sessionStorage.getItem(key) || sessionStorage.getItem('examState_' + selectedExamType);
+                if (sessionRaw) return JSON.parse(sessionRaw);
+            } catch (e) {
+                console.warn('Gagal membaca state tersimpan:', e);
+            }
+            return null;
+        }
+
+        function clearSavedState() {
+            const key = getPersistentStorageKey();
+            try {
+                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
+                sessionStorage.removeItem('examState_' + selectedExamType);
+            } catch (e) {}
+        }
+
+        function setSyncIndicator(state) {
+            const txt = document.getElementById('syncStatusText');
+            const dot = document.getElementById('syncDot');
+            if (!txt || !dot) return;
+
+            if (state === 'saving') {
+                txt.textContent = 'Menyimpan...';
+                txt.className = 'text-[#F4D77D] font-medium';
+                dot.className = 'w-2 h-2 bg-amber-400 rounded-full animate-pulse';
+            } else if (state === 'saved') {
+                txt.textContent = 'Tersimpan';
+                txt.className = 'text-emerald-300/90 font-medium';
+                dot.className = 'w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]';
+            } else {
+                txt.textContent = 'Terhubung';
+                txt.className = 'text-emerald-300/90 font-medium';
+                dot.className = 'w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]';
+            }
+        }
+
+        function saveState() {
+            if (soalData.length === 0 || ujianTelahDisubmit) return;
+            const key = getPersistentStorageKey();
+            const opsiOrderMap = {};
+            soalData.forEach(s => {
+                if (s.opsiAcak) opsiOrderMap[String(s.no)] = s.opsiAcak.map(o => o.key);
+            });
+
+            const payload = {
+                nik: String(user.nik || urlNik || '').trim(),
+                jenis: selectedExamType,
+                jawabanPeserta: jawabanPeserta,
+                sisaDetik: sisaDetik,
+                currentIndex: currentIndex,
+                opsiOrderMap: opsiOrderMap,
+                updatedAt: Date.now()
+            };
+
+            try {
+                const serialized = JSON.stringify(payload);
+                localStorage.setItem(key, serialized);
+                sessionStorage.setItem(key, serialized);
+            } catch (e) {
+                console.warn('Gagal menyimpan state lokal:', e);
+            }
+        }
+
+        function syncProgressToServer(immediate = false) {
+            if (!user.nik || soalData.length === 0 || ujianTelahDisubmit) return;
+
+            const executeSync = () => {
+                setSyncIndicator('saving');
+                fetch(API_URL, {
+                    method: "POST",
+                    keepalive: immediate,
+                    body: JSON.stringify({
+                        action: "saveStoredAnswers",
+                        nik: user.nik,
+                        jenis: selectedExamType,
+                        jawabanPeserta: jawabanPeserta,
+                        sisaDetik: sisaDetik
+                    })
+                })
+                    .then(r => r.json())
+                    .then(() => setSyncIndicator('saved'))
+                    .catch(() => setSyncIndicator('saved')); // Tetap aman di localStorage
+            };
+
+            if (immediate) {
+                if (serverSyncTimer) clearTimeout(serverSyncTimer);
+                executeSync();
+            } else {
+                if (serverSyncTimer) clearTimeout(serverSyncTimer);
+                setSyncIndicator('saving');
+                serverSyncTimer = setTimeout(executeSync, 1200);
+            }
+        }
+
+        // Pastikan state tersimpan saat halaman ditutup / refresh / pindah
+        window.addEventListener('pagehide', () => {
+            if (!ujianTelahDisubmit && soalData.length > 0) {
+                saveState();
+                syncProgressToServer(true);
+            }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (!ujianTelahDisubmit && soalData.length > 0) {
+                saveState();
+            }
+        });
 
         window.onload = function () {
             document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -664,7 +805,7 @@
                         document.getElementById('namaPeserta').textContent = user.nama || '-';
                         document.getElementById('noPesertaDisplay').textContent = 'No. Peserta: ' + (user.nik || '-');
 
-                        mulaiUjian(); // Panggil fungsi utama
+                        mulaiUjian();
                     } else {
                         window.location.href = "index.html";
                     }
@@ -682,26 +823,29 @@
         }
 
         function mulaiUjian() {
-            const storageKey = 'examState_' + selectedExamType;
-            const savedState = JSON.parse(sessionStorage.getItem(storageKey));
+            const savedState = loadLocalSavedState();
 
             if (savedState) {
-                jawabanPeserta = savedState.jawabanPeserta || {};
-                currentIndex = savedState.currentIndex || 0;
+                jawabanPeserta = cleanAnswersMap(savedState.jawabanPeserta);
+                currentIndex = Number(savedState.currentIndex) || 0;
             }
 
             Promise.all([
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getWaktuUjian", jenis: selectedExamType }) }).then(r => r.json()),
+                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getWaktuUjian", jenis: selectedExamType }) }).then(r => r.json()).catch(() => ({ success: false })),
                 fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "loadSoal", jenis: selectedExamType }) }).then(r => r.json()),
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getStoredAnswers", nik: user.nik, jenis: selectedExamType }) }).then(r => r.json())
+                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getStoredAnswers", nik: user.nik, jenis: selectedExamType }) }).then(r => r.json()).catch(() => ({ success: false }))
             ])
                 .then(([waktuRes, soalRes, savedRes]) => {
-                    if (savedState && savedState.sisaDetik > 0) {
-                        startTimer(savedState.sisaDetik);
-                    } else {
-                        let w = (waktuRes.success && waktuRes.waktu) ? waktuRes.waktu : 60;
-                        startTimer(w * 60);
+                    const defaultDetik = ((waktuRes && waktuRes.success && waktuRes.waktu) ? Number(waktuRes.waktu) : 60) * 60;
+                    let waktuMulaiDetik = defaultDetik;
+
+                    if (savedState && Number(savedState.sisaDetik) > 0) {
+                        waktuMulaiDetik = Math.min(Number(savedState.sisaDetik), defaultDetik);
+                    } else if (savedRes && savedRes.success && Number(savedRes.sisaDetik) > 0) {
+                        waktuMulaiDetik = Math.min(Number(savedRes.sisaDetik), defaultDetik);
                     }
+
+                    startTimer(waktuMulaiDetik);
 
                     if (soalRes.error || !soalRes.success) {
                         Swal.fire({ icon: 'error', title: 'Error Soal', text: soalRes.message || 'Gagal memuat soal', confirmButtonColor: '#C8963E' });
@@ -709,17 +853,34 @@
                     }
 
                     soalData = soalRes.data;
+                    const savedOpsiOrder = (savedState && savedState.opsiOrderMap) ? savedState.opsiOrderMap : {};
 
-                    // Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
+                    // Acak opsi sekali saja, atau pulihkan urutan opsi sebelumnya agar konsisten
                     soalData.forEach(soal => {
+                        let opsiMap = {};
                         let opsiArray = [];
-                        if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
-                        if (soal.opsiB) opsiArray.push({ key: 'B', teks: soal.opsiB });
-                        if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
-                        if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
+                        if (soal.opsiA) { opsiMap['A'] = { key: 'A', teks: soal.opsiA }; opsiArray.push(opsiMap['A']); }
+                        if (soal.opsiB) { opsiMap['B'] = { key: 'B', teks: soal.opsiB }; opsiArray.push(opsiMap['B']); }
+                        if (soal.opsiC) { opsiMap['C'] = { key: 'C', teks: soal.opsiC }; opsiArray.push(opsiMap['C']); }
+                        if (soal.opsiD) { opsiMap['D'] = { key: 'D', teks: soal.opsiD }; opsiArray.push(opsiMap['D']); }
 
-                        soal.opsiAcak = shuffleArray(opsiArray);
+                        const savedOrder = savedOpsiOrder[String(soal.no)];
+                        if (Array.isArray(savedOrder) && savedOrder.length === opsiArray.length && savedOrder.every(k => opsiMap[k])) {
+                            soal.opsiAcak = savedOrder.map(k => opsiMap[k]);
+                        } else {
+                            soal.opsiAcak = shuffleArray(opsiArray);
+                        }
                     });
+
+                    // Gabungkan jawaban dari server (jika ada) dan jawaban tersimpan di perangkat
+                    if (savedRes && savedRes.success && savedRes.data && typeof savedRes.data === 'object') {
+                        const serverAnswers = cleanAnswersMap(savedRes.data);
+                        jawabanPeserta = { ...serverAnswers, ...jawabanPeserta };
+                    }
+
+                    if (currentIndex < 0 || currentIndex >= soalData.length) {
+                        currentIndex = 0;
+                    }
 
                     sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
                     document.getElementById('totalSoal').textContent = soalData.length;
@@ -730,15 +891,15 @@
                     document.getElementById('navigasiBawah').classList.remove('hidden');
                     document.getElementById('navigasiBawah').classList.add('flex');
 
-                    if (savedRes && savedRes.success && savedRes.data && Object.keys(savedRes.data).length > 0) {
+                    const restoredCount = getAnsweredCount();
+                    if (restoredCount > 0) {
                         const toast = Swal.mixin({
                             toast: true,
                             position: 'top-end',
                             showConfirmButton: false,
-                            timer: 3000
+                            timer: 3200
                         });
-                        jawabanPeserta = { ...jawabanPeserta, ...savedRes.data };
-                        toast.fire({ icon: 'success', title: 'Jawaban tersimpan berhasil dimuat.' });
+                        toast.fire({ icon: 'success', title: `${restoredCount} jawaban tersimpan berhasil dipulihkan.` });
                     }
 
                     renderPetaSoal();
@@ -795,33 +956,35 @@
         sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse);
         sidebarExpandBtn.addEventListener('click', toggleSidebarCollapse);
 
-        function saveState() {
-            const storageKey = 'examState_' + selectedExamType;
-            if (soalData.length > 0) sessionStorage.setItem(storageKey, JSON.stringify({ jawabanPeserta, sisaDetik, currentIndex }));
-        }
-
         function startTimer(waktuAwalDetik) {
             sisaDetik = waktuAwalDetik;
             if (timerInterval) clearInterval(timerInterval);
             if (stateSaveInterval) clearInterval(stateSaveInterval);
 
-            timerInterval = setInterval(() => {
-                sisaDetik--;
-                const jam = Math.floor(sisaDetik / 3600),
-                    menit = Math.floor((sisaDetik % 3600) / 60),
-                    detik = sisaDetik % 60;
+            const updateTimerDisplay = () => {
+                const safeSec = Math.max(0, sisaDetik);
+                const jam = Math.floor(safeSec / 3600),
+                    menit = Math.floor((safeSec % 3600) / 60),
+                    detik = safeSec % 60;
                 const timerEl = document.getElementById('timer');
                 const timerBox = document.getElementById('timerBox');
 
                 timerEl.textContent = `${String(jam).padStart(2, '0')}:${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
 
-                if (sisaDetik <= 300) {
+                if (safeSec <= 300) {
                     timerEl.classList.add('text-red-400', 'animate-pulse');
                     timerBox.classList.add('timer-warning');
                 }
+            };
+
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                sisaDetik--;
+                updateTimerDisplay();
                 if (sisaDetik <= 0 && !ujianTelahDisubmit) submitUjian('Waktu Habis!');
             }, 1000);
-            stateSaveInterval = setInterval(saveState, 5000);
+            stateSaveInterval = setInterval(saveState, 3000);
         }
 
         function tampilkanSoal(index, withAnimation = true) {
@@ -866,13 +1029,13 @@
             `;
 
             const hurufTampil = ['A', 'B', 'C', 'D'];
+            const soalKey = String(soal.no);
 
             soal.opsiAcak.forEach((opsi, i) => {
+                const isChecked = String(jawabanPeserta[soalKey] || '').trim() === String(opsi.key).trim();
                 const displayKonten = isImageUrl(opsi.teks)
                     ? `<img src="${opsi.teks}" class="max-h-36 w-auto rounded-xl border border-[#F4D77D]/20 ml-1">`
-                    : `<span class="flex-1 ${optionFontClasses[fontLevel]} leading-relaxed ${String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim() ? 'text-[#F4D77D] font-medium' : 'text-[#F5EFE6]/90'}">${opsi.teks}</span>`;
-
-                const isChecked = String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim();
+                    : `<span class="flex-1 ${optionFontClasses[fontLevel]} leading-relaxed ${isChecked ? 'text-[#F4D77D] font-medium' : 'text-[#F5EFE6]/90'}">${opsi.teks}</span>`;
 
                 const div = document.createElement('div');
                 div.className = 'option-card group p-4 cursor-pointer ' + (isChecked ? 'selected' : '');
@@ -915,15 +1078,17 @@
             updateStatusJawaban();
             updateNavigasi();
             updatePetaSoal();
+            saveState();
         }
 
         function simpanJawaban(jawaban) {
             const soal = soalData[currentIndex];
-            jawabanPeserta[soal.no] = jawaban;
+            jawabanPeserta[String(soal.no)] = jawaban;
             updateStatusJawaban();
             updatePetaSoal();
             updateProgressCount();
             saveState();
+            syncProgressToServer(false);
         }
 
         function submitUjian(alasan = "Ujian Selesai") {
@@ -931,6 +1096,7 @@
             ujianTelahDisubmit = true;
             clearInterval(timerInterval);
             clearInterval(stateSaveInterval);
+            if (serverSyncTimer) clearTimeout(serverSyncTimer);
             document.getElementById('modalSubmit').classList.add('hidden');
 
             Swal.fire({
@@ -959,7 +1125,10 @@
                         sessionStorage.setItem('peserta', JSON.stringify({ nama: user.nama || '-', noPeserta: user.nik || '-' }));
                         sessionStorage.setItem('hasilUjian_' + selectedExamType, JSON.stringify(hasilLengkap));
                         sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
-                        sessionStorage.removeItem('examState_' + selectedExamType);
+
+                        // Hapus cadangan draft setelah jawaban resmi tersimpan
+                        clearSavedState();
+
                         Swal.fire({
                             title: alasan,
                             text: 'Jawaban Anda telah berhasil disimpan.',
@@ -982,11 +1151,13 @@
                         });
                     } else {
                         ujianTelahDisubmit = false;
+                        saveState();
                         Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', confirmButtonColor: '#9D446E' });
                     }
                 })
                 .catch(err => {
                     ujianTelahDisubmit = false;
+                    saveState();
                     Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', confirmButtonColor: '#9D446E' });
                 });
         }
@@ -994,7 +1165,7 @@
         function updateStatusJawaban() {
             if (!soalData || !soalData[currentIndex]) return;
             const s = document.getElementById('statusJawaban');
-            if (jawabanPeserta[soalData[currentIndex].no]) {
+            if (jawabanPeserta[String(soalData[currentIndex].no)]) {
                 s.textContent = '✓ Sudah Dijawab';
                 s.className = 'px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40';
             } else {
@@ -1029,7 +1200,7 @@
         function updatePetaSoal() {
             document.querySelectorAll('#petaSoal button').forEach((btn, i) => {
                 if (!soalData[i]) return;
-                const dijawab = jawabanPeserta[soalData[i].no];
+                const dijawab = jawabanPeserta[String(soalData[i].no)];
                 let cls = 'soal-btn ';
                 if (i === currentIndex) {
                     cls += 'soal-btn-active';
@@ -1043,7 +1214,7 @@
         }
 
         function updateProgressCount() {
-            const count = Object.keys(jawabanPeserta).length;
+            const count = getAnsweredCount();
             const total = soalData.length || 0;
             document.getElementById('progressCount').textContent = count;
             const pct = total > 0 ? Math.round((count / total) * 100) : 0;
@@ -1054,7 +1225,7 @@
         document.getElementById('btnPrev').addEventListener('click', () => tampilkanSoal(currentIndex - 1));
         document.getElementById('btnNext').addEventListener('click', () => tampilkanSoal(currentIndex + 1));
         document.getElementById('btnSubmit').addEventListener('click', () => {
-            document.getElementById('terjawab').textContent = Object.keys(jawabanPeserta).length;
+            document.getElementById('terjawab').textContent = getAnsweredCount();
             document.getElementById('totalSoalModal').textContent = soalData.length;
             document.getElementById('modalSubmit').classList.remove('hidden');
         });
@@ -1075,7 +1246,6 @@
         let initialWidth = window.innerWidth;
         let initialHeight = window.innerHeight;
 
-        // 1. Tangkap event rotasi layar HP secara eksplisit
         window.addEventListener('orientationchange', function () {
             setTimeout(() => {
                 initialWidth = window.innerWidth;
@@ -1083,7 +1253,6 @@
             }, 500);
         });
 
-        // 2. Tangkap event perubahan ukuran (resize / split screen)
         window.addEventListener('resize', function () {
             if (!isExamActive || ujianTelahDisubmit) return;
 
