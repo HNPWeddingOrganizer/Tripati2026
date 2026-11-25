@@ -337,7 +337,7 @@
                             <div class="rings ring-1"></div>
                             <div class="rings ring-2"></div>
                             <div class="rings ring-3"></div>
-                            <img id="pFoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="avatar-img img-loading">
+                            <img id="pFoto" referrerpolicy="no-referrer" alt="Foto Profil" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="avatar-img img-loading">
                             <div class="absolute bottom-3 right-3 bg-[#C8963E] rounded-full p-1 border-2 border-[#160F0C] z-20 shadow-lg" title="Akun Terverifikasi">
                                 <svg class="w-3 h-3 text-[#160F0C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                             </div>
@@ -474,6 +474,29 @@
         let user = {};
         let selectedExamType = '';
 
+        // Konversi URL foto (sama seperti logika detailfix8.html)
+        function resolveProfilePhoto(rawUrl, nama) {
+            const initial = encodeURIComponent((nama || 'P').trim().charAt(0).toUpperCase());
+            const fallback = `https://placehold.co/200/160F0C/F4D77D?text=${initial}`;
+
+            if (!rawUrl || typeof rawUrl !== 'string' || rawUrl.trim() === '' || rawUrl.trim() === '-') {
+                return fallback;
+            }
+
+            const cleaned = rawUrl.trim();
+            if (cleaned.startsWith('data:image')) return cleaned;
+
+            const match = cleaned.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+                          cleaned.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+                          cleaned.match(/id=([a-zA-Z0-9_-]+)/);
+
+            if (match && match[1]) {
+                return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w300-h300`;
+            }
+
+            return cleaned;
+        }
+
         window.onload = function() {
             const sid = sessionStorage.getItem('sessionId');
 
@@ -489,15 +512,25 @@
                 if(res.success) {
                     user = res.data;
 
-                    // Populate Dashboard
-                    document.getElementById('pNama').textContent = user.nama || 'Nama Tidak Ditemukan';
-                    document.getElementById('pSekolah').textContent = user.sekolah || '-';
+                    // Populate Dashboard (mendukung key TRIPATI maupun Bhinnekastra)
+                    const namaUser = user.nama || 'Nama Tidak Ditemukan';
+                    document.getElementById('pNama').textContent = namaUser;
+                    document.getElementById('pSekolah').textContent = user.sekolah || user.asalSekolah || '-';
                     document.getElementById('pNik').textContent = user.nik || '-';
-                    document.getElementById('pHp').textContent = user.nohp || '-';
+                    document.getElementById('pHp').textContent = user.nohp || user.nomorTelepon || '-';
 
                     const img = document.getElementById('pFoto');
-                    img.src = user.foto || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+                    const rawFoto = user.foto || user.fotoProfil || '';
+                    const initial = encodeURIComponent((namaUser || 'P').trim().charAt(0).toUpperCase());
+                    const fallbackImg = `https://placehold.co/200/160F0C/F4D77D?text=${initial}`;
+
                     img.onload = () => img.classList.remove('img-loading');
+                    img.onerror = () => {
+                        img.onerror = null;
+                        img.src = fallbackImg;
+                        img.classList.remove('img-loading');
+                    };
+                    img.src = resolveProfilePhoto(rawFoto, namaUser);
                 } else {
                     logout();
                 }
