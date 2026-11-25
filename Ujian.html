@@ -1,148 +1,460 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistem Ujian CAT - TRIPATI</title>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_dppi_512.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+        :root {
+            /* Premium Earthy Palette */
+            --bg-main: #160F0C;
+            --glass-bg: rgba(45, 30, 25, 0.45);
+            --glass-bg-card: rgba(36, 24, 19, 0.62);
+            --glass-border: rgba(244, 215, 125, 0.16);
+            --color-primary: #C8963E;
+            --color-primary-hover: #A87B32;
+            --color-accent: #9D446E;
+            --text-main: #F4D77D;
+            --text-muted: #D5B992;
+            --text-reading: #F5EFE6;
+        }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #1A1A1A;
-            color: #FFF;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-reading);
+            min-height: 100vh;
+            margin: 0;
             overflow-x: hidden;
         }
 
-        .gold-gradient-bg {
-            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+        /* --- BACKGROUND ANIMATED SHAPES (Lebih lembut agar nyaman dibaca) --- */
+        .bg-shapes {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
         }
 
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(95px);
+            opacity: 0.34;
+            animation: float 24s infinite alternate ease-in-out;
+        }
+
+        .shape-1 {
+            width: 520px;
+            height: 520px;
+            background: rgba(200, 150, 62, 0.25);
+            top: -20%;
+            left: -10%;
+        }
+
+        .shape-2 {
+            width: 420px;
+            height: 420px;
+            background: rgba(157, 68, 110, 0.25);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -7s;
+        }
+
+        .shape-3 {
+            width: 360px;
+            height: 360px;
+            background: rgba(243, 146, 104, 0.18);
+            top: 45%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 35px) scale(1.08); }
+            100% { transform: translate(-35px, 50px) scale(0.92); }
+        }
+
+        /* --- GLASS SURFACES --- */
+        .navbar-glass {
+            background: rgba(22, 15, 12, 0.82);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .sidebar-glass {
+            background: rgba(26, 17, 14, 0.92);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-right: 1px solid var(--glass-border);
+        }
+
+        .glass-card {
+            background: var(--glass-bg-card);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 24px 50px -15px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-glass {
+            background: rgba(22, 15, 12, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* --- TYPOGRAPHY & ACCENTS --- */
+        .title-gradient {
+            background: linear-gradient(to right, #F4D77D, #C8963E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%);
+        }
+
+        /* --- BUTTONS --- */
+        .btn-gold {
+            background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%);
+            color: #160F0C !important;
+            border-radius: 100px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 25px rgba(200, 150, 62, 0.26);
+        }
+
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(200, 150, 62, 0.42);
+            filter: brightness(1.04);
+        }
+
+        .btn-outline-earthy {
+            background: rgba(45, 30, 25, 0.55);
+            color: var(--text-main);
+            border: 1px solid rgba(244, 215, 125, 0.28);
+            border-radius: 100px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .btn-outline-earthy:hover:not(:disabled) {
+            background: rgba(200, 150, 62, 0.16);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-earthy:disabled {
+            opacity: 0.38;
+            cursor: not-allowed;
+        }
+
+        .btn-finish {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff !important;
+            border-radius: 100px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.28);
+        }
+
+        .btn-finish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(16, 185, 129, 0.42);
+            filter: brightness(1.06);
+        }
+
+        /* --- OPTION CARDS --- */
+        .option-card {
+            background: rgba(22, 15, 12, 0.48);
+            border: 1.5px solid rgba(244, 215, 125, 0.14);
+            border-radius: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .option-card:hover {
+            background: rgba(200, 150, 62, 0.08);
+            border-color: rgba(200, 150, 62, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .option-card.selected {
+            background: linear-gradient(135deg, rgba(200, 150, 62, 0.18) 0%, rgba(157, 68, 110, 0.12) 100%);
+            border-color: #C8963E;
+            box-shadow: 0 8px 24px -6px rgba(200, 150, 62, 0.32);
+        }
+
+        /* --- PETA SOAL BUTTON STATES --- */
+        .soal-btn {
+            height: 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .soal-btn:hover {
+            transform: scale(1.06);
+        }
+
+        .soal-btn-unanswered {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(244, 215, 125, 0.14);
+        }
+
+        .soal-btn-unanswered:hover {
+            border-color: rgba(200, 150, 62, 0.5);
+            color: var(--text-main);
+        }
+
+        .soal-btn-answered {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.9) 100%);
+            color: #ffffff;
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.22);
+        }
+
+        .soal-btn-active {
+            background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%) !important;
+            color: #160F0C !important;
+            border: 1px solid #F4D77D !important;
+            box-shadow: 0 0 0 3px rgba(244, 215, 125, 0.28), 0 8px 18px rgba(200, 150, 62, 0.4) !important;
+            transform: scale(1.06);
+        }
+
+        /* --- SCROLLBAR --- */
         .sidebar-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
 
         .sidebar-scrollbar::-webkit-scrollbar-track {
-            background: #2D2D2D;
+            background: rgba(22, 15, 12, 0.5);
         }
 
         .sidebar-scrollbar::-webkit-scrollbar-thumb {
-            background: #FFD700;
-            border-radius: 3px;
+            background: rgba(200, 150, 62, 0.45);
+            border-radius: 10px;
         }
 
-        #pilihanContainer input[type="radio"] {
-            accent-color: #FFD700;
+        .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(200, 150, 62, 0.75);
         }
 
-        #petaSoal button.bg-gradient-to-br {
-            background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
-            color: white;
+        /* --- PROGRESS BAR --- */
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 100px;
+            overflow: hidden;
+            border: 1px solid rgba(244, 215, 125, 0.1);
         }
 
-        #petaSoal button.ring-4 {
-            background: #3b82f6 !important;
-            color: white;
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #C8963E 0%, #F4D77D 100%);
+            border-radius: 100px;
+            box-shadow: 0 0 12px rgba(200, 150, 62, 0.55);
+            transition: width 0.35s ease;
+        }
+
+        /* --- TIMER WARNING --- */
+        .timer-warning {
+            border-color: rgba(239, 68, 68, 0.65) !important;
+            background: rgba(157, 68, 110, 0.25) !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.28) !important;
+        }
+
+        /* --- ANIMATIONS --- */
+        .fade-in-question {
+            animation: questionFade 0.25s ease forwards;
+        }
+
+        @keyframes questionFade {
+            from { opacity: 0.45; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- SWEETALERT2 EARTHY OVERRIDE --- */
+        .swal2-popup {
+            background: rgba(34, 22, 18, 0.96) !important;
+            border: 1px solid rgba(244, 215, 125, 0.22) !important;
+            border-radius: 28px !important;
+            color: #F4D77D !important;
+            backdrop-filter: blur(20px);
+        }
+
+        .swal2-title {
+            color: #F4D77D !important;
+        }
+
+        .swal2-html-container {
+            color: #D5B992 !important;
         }
     </style>
 </head>
 
-<body class="bg-[#1A1A1A] min-h-screen text-gray-100">
+<body>
 
-    <div id="examWrapper" class="flex min-h-screen">
+    <!-- Background Shapes (Glassmorphism Blobs) -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
 
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black/80 z-40 hidden md:hidden"></div>
+    <div id="examWrapper" class="relative z-10 flex min-h-screen">
 
-        <!-- SIDEBAR UJIAN -->
+        <!-- Overlay Sidebar Mobile -->
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+        <!-- SIDEBAR NAVIGASI SOAL -->
         <aside id="sidebar"
-            class="bg-gray-900 shadow-2xl flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:h-screen"
-            style="width: 280px;">
-            <div class="gold-gradient-bg px-6 flex items-center justify-between h-16">
-                <div class="sidebar-content">
-                    <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
+            class="sidebar-glass shadow-2xl flex flex-col fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-all duration-300 ease-in-out md:sticky md:top-0 md:translate-x-0 md:h-screen shrink-0"
+            style="width: 284px;">
+
+            <!-- Header Sidebar -->
+            <div class="px-5 flex items-center justify-between h-[72px] border-b border-[#F4D77D]/15">
+                <div class="sidebar-content flex items-center gap-2.5 overflow-hidden">
+                    <div class="w-9 h-9 rounded-xl bg-[#C8963E]/15 border border-[#C8963E]/35 flex items-center justify-center text-[#F4D77D] shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
                             </path>
                         </svg>
-                        <span class="sidebar-text">Navigasi Soal</span>
-                    </h3>
+                    </div>
+                    <div class="sidebar-text leading-tight">
+                        <h3 class="font-bold text-sm title-gradient tracking-wide">NAVIGASI SOAL</h3>
+                        <p class="text-[11px] text-[#D5B992]/75">Pilih nomor soal</p>
+                    </div>
                 </div>
-                <button id="sidebarCollapseBtn"
-                    class="hidden md:block text-gray-900 hover:bg-black/20 p-2 rounded-md"><svg class="w-5 h-5"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="sidebarCollapseBtn" title="Ciutkan Sidebar"
+                    class="hidden md:flex items-center justify-center text-[#D5B992] hover:text-[#F4D77D] hover:bg-[#F4D77D]/10 p-2 rounded-xl transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
-                    </svg></button>
+                    </svg>
+                </button>
+                <button onclick="closeSidebar()" title="Tutup"
+                    class="md:hidden text-[#D5B992] hover:text-[#F4D77D] p-2 rounded-xl hover:bg-[#F4D77D]/10 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
+
+            <!-- Mini Progress Bar di Sidebar -->
+            <div id="sidebarProgressBox" class="px-5 pt-4 pb-2 sidebar-content">
+                <div class="flex justify-between items-center text-xs mb-1.5">
+                    <span class="text-[#D5B992] font-medium">Progres Pengerjaan</span>
+                    <span id="progressPercent" class="font-bold text-[#F4D77D]">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div id="progressBarFill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Grid Peta Nomor Soal -->
             <div class="flex-1 overflow-y-auto sidebar-scrollbar p-4">
-                <div id="petaSoal" class="grid gap-2 transition-all duration-300"
+                <div id="petaSoal" class="grid gap-2.5 transition-all duration-300"
                     style="grid-template-columns: repeat(4, 1fr);"></div>
             </div>
-            <div id="sidebarLegend" class="border-t border-gray-700 p-4 bg-gray-800 sidebar-content">
-                <div class="space-y-2 text-sm">
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg shadow-sm flex-shrink-0">
-                        </div><span class="text-gray-400 sidebar-text">Sudah Dijawab</span>
+
+            <!-- Legenda Sidebar -->
+            <div id="sidebarLegend" class="border-t border-[#F4D77D]/15 p-4 bg-[#160F0C]/55 sidebar-content">
+                <div class="grid grid-cols-1 gap-2.5 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-lg soal-btn-answered shrink-0"></div>
+                        <span class="text-[#D5B992] sidebar-text">Sudah Dijawab</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-gray-500 rounded-lg shadow-sm flex-shrink-0"></div><span
-                            class="text-gray-400 sidebar-text">Belum Dijawab</span>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-lg soal-btn-unanswered shrink-0"></div>
+                        <span class="text-[#D5B992] sidebar-text">Belum Dijawab</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-blue-500 rounded-lg shadow-sm ring-2 ring-blue-300 flex-shrink-0"></div>
-                        <span class="text-gray-400 sidebar-text">Soal Aktif</span>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-lg gold-gradient-bg ring-2 ring-[#F4D77D]/40 shrink-0"></div>
+                        <span class="text-[#D5B992] sidebar-text">Soal Aktif</span>
                     </div>
                 </div>
             </div>
         </aside>
 
         <!-- MAIN CONTENT UJIAN -->
-        <div class="flex-1 flex flex-col min-h-screen relative">
-            <nav class="sticky top-0 z-40 backdrop-blur-xl bg-gray-900/80 border-b border-yellow-700/20 shadow-lg h-16">
-                <div class="absolute inset-0 gold-gradient-bg opacity-80"></div>
-                <div class="relative container mx-auto px-6 h-full flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <button id="sidebarToggle" class="md:hidden text-gray-900 p-2 rounded-xl hover:bg-black/20"><svg
-                                class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex-1 flex flex-col min-h-screen relative min-w-0">
+
+            <!-- Navbar Atas -->
+            <nav class="sticky top-0 z-30 navbar-glass h-[72px] shadow-lg">
+                <div class="max-w-5xl mx-auto px-4 md:px-6 h-full flex justify-between items-center gap-3">
+                    <!-- Kiri: Toggle Sidebar & Info Peserta -->
+                    <div class="flex items-center gap-3 min-w-0">
+                        <button id="sidebarToggle"
+                            class="md:hidden text-[#F4D77D] bg-[#C8963E]/15 border border-[#C8963E]/30 p-2 rounded-xl hover:bg-[#C8963E]/25 transition shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 6h16M4 12h16m-7 6h7"></path>
-                            </svg></button>
-                        <div>
-                            <h1 class="text-base md:text-lg font-bold text-gray-900" id="namaPeserta">Memuat...</h1>
-                            <p class="text-xs text-gray-800" id="noPesertaDisplay">Loading...</p>
+                            </svg>
+                        </button>
+                        <div class="hidden sm:flex w-10 h-10 rounded-full bg-[#160F0C]/80 border border-[#F4D77D]/25 p-1 items-center justify-center shrink-0">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" alt="Logo DPPI"
+                                class="h-full w-full object-contain"
+                                onerror="this.src='https://placehold.co/100/160F0C/F4D77D?text=DPPI'">
+                        </div>
+                        <div class="min-w-0">
+                            <h1 class="text-sm md:text-base font-bold title-gradient truncate" id="namaPeserta">Memuat...</h1>
+                            <p class="text-[11px] text-[#D5B992]/80 truncate font-mono" id="noPesertaDisplay">Loading...</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 md:gap-3">
+
+                    <!-- Kanan: Progress & Timer -->
+                    <div class="flex items-center gap-2.5 shrink-0">
+                        <!-- Progress Pill -->
                         <div
-                            class="hidden md:flex items-center gap-2 bg-gray-900/30 backdrop-blur-lg rounded-xl px-3 py-2 shadow-xl ring-1 ring-yellow-600">
-                            <div class="gold-gradient-bg rounded-lg p-1.5 shadow-inner"><svg
-                                    class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="hidden sm:flex items-center gap-2.5 bg-[#2D1E19]/65 border border-[#F4D77D]/18 rounded-2xl px-3.5 py-2">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg></div>
-                            <div>
-                                <p class="text-xs text-gray-800 font-medium">Progress</p>
-                                <p class="text-base font-extrabold text-gray-900"><span
-                                        id="progressCount">0</span>/<span id="totalSoalNav">0</span></p>
+                                </svg>
+                            </div>
+                            <div class="leading-tight">
+                                <p class="text-[10px] uppercase tracking-wider text-[#D5B992]/80 font-semibold">Terjawab</p>
+                                <p class="text-sm font-extrabold text-[#F4D77D]">
+                                    <span id="progressCount">0</span><span class="text-[#D5B992]/60 font-medium">/<span id="totalSoalNav">0</span></span>
+                                </p>
                             </div>
                         </div>
-                        <div
-                            class="bg-gray-900/30 backdrop-blur-lg rounded-xl px-3 py-2 shadow-xl ring-1 ring-yellow-600">
-                            <div class="flex items-center gap-2">
-                                <div class="gold-gradient-bg rounded-lg p-1.5 shadow-inner"><svg
-                                        class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+
+                        <!-- Timer Pill -->
+                        <div id="timerBox"
+                            class="bg-[#2D1E19]/75 border border-[#C8963E]/40 rounded-2xl px-3.5 py-2 shadow-lg transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl gold-gradient-bg flex items-center justify-center text-[#160F0C] shadow-inner shrink-0">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
-                                    </svg></div>
-                                <div class="text-center">
-                                    <p class="text-xs text-gray-800 font-medium leading-none">Sisa Waktu</p>
-                                    <p class="text-lg font-extrabold text-gray-900 tabular-nums leading-tight"
+                                    </svg>
+                                </div>
+                                <div class="leading-tight">
+                                    <p class="text-[10px] uppercase tracking-wider text-[#D5B992]/80 font-semibold">Sisa Waktu</p>
+                                    <p class="text-sm md:text-base font-extrabold text-[#F4D77D] tabular-nums tracking-wide"
                                         id="timer">--:--:--</p>
                                 </div>
                             </div>
@@ -151,103 +463,165 @@
                 </div>
             </nav>
 
-            <main id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 pb-20 relative">
-                <button id="sidebarExpandBtn"
-                    class="hidden fixed top-20 left-4 z-30 gold-gradient-bg hover:opacity-90 text-gray-900 p-3 rounded-lg shadow-lg"><svg
-                        class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Area Konten Soal -->
+            <main id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 pb-24 relative">
+                <!-- Tombol Expand Sidebar Desktop -->
+                <button id="sidebarExpandBtn" title="Perluas Navigasi Soal"
+                    class="hidden fixed top-24 left-4 z-30 gold-gradient-bg hover:opacity-95 text-[#160F0C] p-2.5 rounded-xl shadow-xl transition hover:scale-105">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
-                    </svg></button>
+                    </svg>
+                </button>
 
-                <div class="px-6 lg:px-8 py-8">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+
                     <!-- Loader Ujian -->
-                    <div id="loaderUjian" class="text-center py-20">
-                        <div
-                            class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mb-4">
+                    <div id="loaderUjian" class="glass-card text-center py-20 px-6">
+                        <div class="relative w-16 h-16 mx-auto mb-5 flex items-center justify-center">
+                            <div class="absolute inset-0 rounded-full border-2 border-[#F4D77D]/15"></div>
+                            <div class="w-16 h-16 animate-spin rounded-full border-2 border-t-[#F4D77D] border-r-[#C8963E] border-b-transparent border-l-transparent"></div>
                         </div>
-                        <p class="text-yellow-500 font-semibold tracking-widest">Menyiapkan Soal...</p>
+                        <p class="title-gradient font-bold text-base tracking-widest uppercase">Menyiapkan Ruang Ujian</p>
+                        <p class="text-xs text-[#D5B992]/80 mt-2">Mohon tunggu sebentar, soal sedang dimuat...</p>
                     </div>
 
                     <!-- Kotak Soal Ujian -->
-                    <div id="ujianContentBox" class="bg-gray-800 rounded-2xl shadow-xl overflow-hidden mb-6 hidden">
-                        <div class="gold-gradient-bg px-6 py-4 flex items-center justify-between text-gray-900">
+                    <div id="ujianContentBox" class="glass-card overflow-hidden mb-6 hidden select-none">
+                        <!-- Header Kartu Soal -->
+                        <div class="px-5 sm:px-7 py-4 bg-[#160F0C]/55 border-b border-[#F4D77D]/15 flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
-                                <div class="bg-gray-900/10 rounded-lg px-3 py-1 backdrop-blur-sm"><span
-                                        class="font-bold text-lg">Soal <span id="currentSoalNo">1</span></span></div>
-                                <span class="text-gray-800">dari <span id="totalSoal"
-                                        class="font-semibold">0</span></span>
+                                <span class="gold-gradient-bg text-[#160F0C] font-extrabold text-sm px-3.5 py-1.5 rounded-full shadow-md">
+                                    Soal <span id="currentSoalNo">1</span>
+                                </span>
+                                <span class="text-xs sm:text-sm text-[#D5B992] font-medium">
+                                    dari <span id="totalSoal" class="font-bold text-[#F4D77D]">0</span> soal
+                                </span>
                             </div>
-                            <div id="statusJawaban"
-                                class="px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm">
-                                Belum Dijawab</div>
+
+                            <div class="flex items-center gap-2.5">
+                                <!-- Kontrol Ukuran Font untuk Kenyamanan Membaca -->
+                                <div class="flex items-center bg-[#2D1E19]/80 border border-[#F4D77D]/20 rounded-full p-0.5" title="Atur ukuran teks soal">
+                                    <button type="button" id="btnFontDec" onclick="ubahUkuranFont(-1)"
+                                        class="px-2.5 py-1 text-xs font-bold text-[#D5B992] hover:text-[#F4D77D] hover:bg-[#F4D77D]/10 rounded-full transition">A-</button>
+                                    <span class="w-px h-3.5 bg-[#F4D77D]/20"></span>
+                                    <button type="button" id="btnFontInc" onclick="ubahUkuranFont(1)"
+                                        class="px-2.5 py-1 text-xs font-bold text-[#D5B992] hover:text-[#F4D77D] hover:bg-[#F4D77D]/10 rounded-full transition">A+</button>
+                                </div>
+
+                                <!-- Badge Status Jawaban -->
+                                <div id="statusJawaban"
+                                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2D1E19]/80 text-[#D5B992] border border-[#F4D77D]/20">
+                                    Belum Dijawab
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-8 text-gray-100">
-                            <div id="kontenSoal" class="mb-8">
-                                <p class="text-lg">Memuat soal...</p>
+
+                        <!-- Isi Pertanyaan & Pilihan Jawaban -->
+                        <div class="p-5 sm:p-8">
+                            <div id="kontenSoal" class="mb-7">
+                                <p class="text-base sm:text-lg text-[#F5EFE6]">Memuat soal...</p>
                             </div>
-                            <div class="space-y-3" id="pilihanContainer"></div>
+
+                            <div class="h-px w-full bg-gradient-to-r from-transparent via-[#F4D77D]/15 to-transparent mb-6"></div>
+
+                            <div class="space-y-3.5" id="pilihanContainer"></div>
                         </div>
                     </div>
 
-                    <div id="navigasiBawah" class="flex gap-4 justify-center hidden">
+                    <!-- Navigasi Bawah -->
+                    <div id="navigasiBawah" class="hidden items-center justify-between gap-3 sm:gap-4">
                         <button id="btnPrev" disabled
-                            class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-5 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">Sebelumnya</button>
+                            class="btn-outline-earthy py-3.5 px-5 sm:px-7 text-sm flex items-center justify-center gap-2 flex-1 sm:flex-initial">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                            <span>Sebelumnya</span>
+                        </button>
+
                         <button id="btnNext"
-                            class="gold-gradient-bg text-gray-900 font-bold py-3 px-5 rounded-xl transition-all transform hover:scale-105">Berikutnya</button>
+                            class="btn-gold py-3.5 px-6 sm:px-8 text-sm flex items-center justify-center gap-2 flex-1 sm:flex-initial">
+                            <span>Berikutnya</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+
                         <button id="btnSubmit"
-                            class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-5 rounded-xl transition-all transform hover:scale-105 hidden">Selesai
-                            Ujian</button>
+                            class="btn-finish py-3.5 px-6 sm:px-8 text-sm items-center justify-center gap-2 flex-1 sm:flex-initial hidden">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Selesai Ujian</span>
+                        </button>
                     </div>
                 </div>
             </main>
 
+            <!-- Footer -->
             <footer
-                class="absolute bottom-0 w-full backdrop-blur-xl bg-gray-900/60 border-t border-yellow-700/20 shadow-inner h-12 flex items-center justify-between px-6 text-sm text-gray-500">
+                class="absolute bottom-0 w-full footer-glass h-12 flex items-center justify-between px-4 sm:px-6 text-xs text-[#D5B992]/75">
                 <div class="flex items-center gap-2">
-                    <div class="bg-gray-800 rounded-lg p-1.5"><svg class="w-4 h-4 text-yellow-400" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-[#C8963E]/15 border border-[#C8963E]/30 rounded-lg p-1 text-[#F4D77D]">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
                             </path>
-                        </svg></div><span id="labelJenisUjian">UJIAN</span>
+                        </svg>
+                    </div>
+                    <span id="labelJenisUjian" class="font-semibold text-[#F4D77D] tracking-wide">UJIAN</span>
                 </div>
-                <p>&copy; <span id="currentYear">2025</span> DPPI KOTA YOGYAKARTA</p>
-                <div class="flex items-center gap-2 text-xs">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span>Terhubung</span>
+                <p class="hidden sm:block text-[11px] tracking-wide">&copy; <span id="currentYear">2026</span> DPPI KOTA YOGYAKARTA</p>
+                <div class="flex items-center gap-2 text-[11px]">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                    <span class="text-emerald-300/90 font-medium">Terhubung</span>
                 </div>
             </footer>
         </div>
     </div>
 
-    <!-- MODAL SUBMIT UJIAN -->
+    <!-- MODAL KONFIRMASI SUBMIT UJIAN -->
     <div id="modalSubmit"
-        class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-        <div
-            class="bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all border border-yellow-700">
-            <div class="gold-gradient-bg px-6 py-4">
-                <h3 class="text-xl font-bold text-gray-900">Konfirmasi Submit Ujian</h3>
+        class="hidden fixed inset-0 bg-[#160F0C]/85 backdrop-blur-md flex items-center justify-center z-[60] p-4">
+        <div class="glass-card max-w-md w-full overflow-hidden transform transition-all border border-[#F4D77D]/25">
+            <div class="px-6 py-5 border-b border-[#F4D77D]/15 bg-[#160F0C]/55 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#C8963E]/15 border border-[#C8963E]/40 flex items-center justify-center text-[#F4D77D]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold title-gradient">Konfirmasi Submit Ujian</h3>
+                    <p class="text-xs text-[#D5B992]/80">Periksa kembali sebelum mengakhiri sesi</p>
+                </div>
             </div>
             <div class="p-6">
-                <div class="bg-yellow-900/30 border-l-4 border-yellow-500 rounded p-4 mb-4">
-                    <p class="text-gray-200">Anda menjawab <span id="terjawab"
-                            class="font-bold text-green-400 text-xl"></span> dari <span id="totalSoalModal"
-                            class="font-bold text-yellow-400 text-xl"></span> soal.</p>
+                <div class="bg-[#160F0C]/60 border border-[#C8963E]/30 rounded-2xl p-4 mb-4 text-center">
+                    <p class="text-xs uppercase tracking-wider text-[#D5B992] mb-1">Ringkasan Jawaban</p>
+                    <p class="text-[#F5EFE6] text-sm">
+                        Anda menjawab
+                        <span id="terjawab" class="font-extrabold text-emerald-400 text-2xl mx-1">0</span>
+                        dari
+                        <span id="totalSoalModal" class="font-extrabold text-[#F4D77D] text-2xl mx-1">0</span>
+                        soal.
+                    </p>
                 </div>
-                <p class="text-gray-400 mb-6">Yakin ingin menyelesaikan? Jawaban akan disimpan dan tidak bisa diubah
-                    lagi.</p>
+                <p class="text-xs sm:text-sm text-[#D5B992] leading-relaxed text-center mb-6">
+                    Yakin ingin menyelesaikan ujian? Jawaban akan langsung disimpan ke sistem dan tidak dapat diubah kembali.
+                </p>
                 <div class="flex gap-3">
                     <button id="btnBatal"
-                        class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-xl transition">Batal</button>
+                        class="flex-1 btn-outline-earthy py-3 text-sm">Batal</button>
                     <button id="btnKonfirmasi"
-                        class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl shadow-lg transition">Ya,
-                        Selesai</button>
+                        class="flex-1 btn-finish py-3 text-sm">Ya, Selesai</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbz_LjAlC49ErfhgGSWI0u2UbZ8Lpyikbxo8hMr435EfinIA5pPxZDws9uaNLrOOfOmb/exec"; // GANTI DENGAN URL API VERCEL ANDA
+        const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec"; // GANTI DENGAN URL API VERCEL ANDA
 
         const urlParams = new URLSearchParams(window.location.search);
         const selectedExamType = urlParams.get('jenis') || 'PIP';
@@ -258,6 +632,16 @@
         let soalData = [], currentIndex = 0, jawabanPeserta = {}, sisaDetik = 0, timerInterval, stateSaveInterval;
         let ujianTelahDisubmit = false, sidebarCollapsed = false;
 
+        // Pengaturan ukuran font baca (0: Standar, 1: Besar, 2: Ekstra Besar)
+        let fontLevel = 0;
+        const questionFontClasses = ['text-base sm:text-lg', 'text-lg sm:text-xl', 'text-xl sm:text-2xl'];
+        const optionFontClasses = ['text-sm sm:text-base', 'text-base sm:text-lg', 'text-lg sm:text-xl'];
+
+        function ubahUkuranFont(delta) {
+            fontLevel = Math.max(0, Math.min(2, fontLevel + delta));
+            if (soalData.length > 0) tampilkanSoal(currentIndex, false);
+        }
+
         window.onload = function () {
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             const sid = sessionStorage.getItem('sessionId');
@@ -265,7 +649,7 @@
             // Proteksi: Harus login dan bawa NIK & Jenis di URL
             if (!sid || !urlNik) return window.location.href = "index.html";
 
-            document.title = `Ujian ${selectedExamType} - Sistem CAT`;
+            document.title = `Ujian ${selectedExamType} - Sistem CAT TRIPATI`;
             document.getElementById('labelJenisUjian').innerText = `UJIAN ${selectedExamType}`;
 
             // Tarik Session
@@ -320,12 +704,13 @@
                     }
 
                     if (soalRes.error || !soalRes.success) {
-                        Swal.fire('Error Soal', soalRes.message || 'Gagal memuat soal', 'error'); return;
+                        Swal.fire({ icon: 'error', title: 'Error Soal', text: soalRes.message || 'Gagal memuat soal', confirmButtonColor: '#C8963E' });
+                        return;
                     }
 
                     soalData = soalRes.data;
 
-                    // PERBAIKAN: Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
+                    // Acak (shuffle) urutan opsi HANYA 1 KALI saat soal dimuat
                     soalData.forEach(soal => {
                         let opsiArray = [];
                         if (soal.opsiA) opsiArray.push({ key: 'A', teks: soal.opsiA });
@@ -333,7 +718,7 @@
                         if (soal.opsiC) opsiArray.push({ key: 'C', teks: soal.opsiC });
                         if (soal.opsiD) opsiArray.push({ key: 'D', teks: soal.opsiD });
 
-                        soal.opsiAcak = shuffleArray(opsiArray); // Simpan hasil acak ke dalam soal
+                        soal.opsiAcak = shuffleArray(opsiArray);
                     });
 
                     sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
@@ -346,7 +731,12 @@
                     document.getElementById('navigasiBawah').classList.add('flex');
 
                     if (savedRes && savedRes.success && savedRes.data && Object.keys(savedRes.data).length > 0) {
-                        const toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#1F2937', color: '#fff' });
+                        const toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
                         jawabanPeserta = { ...jawabanPeserta, ...savedRes.data };
                         toast.fire({ icon: 'success', title: 'Jawaban tersimpan berhasil dimuat.' });
                     }
@@ -357,7 +747,7 @@
                     updateProgressCount();
                 })
                 .catch(err => {
-                    Swal.fire('Error', 'Terjadi kesalahan sistem: ' + err.message, 'error');
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem: ' + err.message, confirmButtonColor: '#9D446E' });
                 });
         }
 
@@ -370,7 +760,11 @@
             return /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|svg|webp)(\?.*)?$|^https?:\/\/(drive\.google\.com\/(uc|thumbnail)\?|lh3\.googleusercontent\.com\/d\/)/i.test(url.trim());
         }
 
-        const sidebarToggle = document.getElementById('sidebarToggle'), sidebar = document.getElementById('sidebar'), sidebarOverlay = document.getElementById('sidebarOverlay'), sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn'), sidebarExpandBtn = document.getElementById('sidebarExpandBtn');
+        const sidebarToggle = document.getElementById('sidebarToggle'),
+            sidebar = document.getElementById('sidebar'),
+            sidebarOverlay = document.getElementById('sidebarOverlay'),
+            sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn'),
+            sidebarExpandBtn = document.getElementById('sidebarExpandBtn');
 
         function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('hidden'); }
         function openSidebar() { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); }
@@ -378,22 +772,28 @@
         function toggleSidebarCollapse() {
             sidebarCollapsed = !sidebarCollapsed;
             if (sidebarCollapsed) {
-                sidebar.style.width = '70px'; sidebarExpandBtn.classList.remove('hidden');
+                sidebar.style.width = '72px';
+                sidebarExpandBtn.classList.remove('hidden');
                 document.querySelectorAll('.sidebar-text').forEach(el => el.style.display = 'none');
                 document.getElementById('sidebarLegend').style.display = 'none';
+                document.getElementById('sidebarProgressBox').style.display = 'none';
                 document.getElementById('petaSoal').style.gridTemplateColumns = '1fr';
                 sidebarCollapseBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>';
             } else {
-                sidebar.style.width = '280px'; sidebarExpandBtn.classList.add('hidden');
+                sidebar.style.width = '284px';
+                sidebarExpandBtn.classList.add('hidden');
                 document.querySelectorAll('.sidebar-text').forEach(el => el.style.display = '');
                 document.getElementById('sidebarLegend').style.display = '';
+                document.getElementById('sidebarProgressBox').style.display = '';
                 document.getElementById('petaSoal').style.gridTemplateColumns = 'repeat(4, 1fr)';
                 sidebarCollapseBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>';
             }
         }
 
-        sidebarToggle.addEventListener('click', openSidebar); sidebarOverlay.addEventListener('click', closeSidebar);
-        sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse); sidebarExpandBtn.addEventListener('click', toggleSidebarCollapse);
+        sidebarToggle.addEventListener('click', openSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+        sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse);
+        sidebarExpandBtn.addEventListener('click', toggleSidebarCollapse);
 
         function saveState() {
             const storageKey = 'examState_' + selectedExamType;
@@ -407,73 +807,138 @@
 
             timerInterval = setInterval(() => {
                 sisaDetik--;
-                const jam = Math.floor(sisaDetik / 3600), menit = Math.floor((sisaDetik % 3600) / 60), detik = sisaDetik % 60;
-                document.getElementById('timer').textContent = `${String(jam).padStart(2, '0')}:${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
+                const jam = Math.floor(sisaDetik / 3600),
+                    menit = Math.floor((sisaDetik % 3600) / 60),
+                    detik = sisaDetik % 60;
+                const timerEl = document.getElementById('timer');
+                const timerBox = document.getElementById('timerBox');
 
-                if (sisaDetik <= 300) { document.getElementById('timer').classList.add('text-red-500', 'animate-pulse'); }
+                timerEl.textContent = `${String(jam).padStart(2, '0')}:${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
+
+                if (sisaDetik <= 300) {
+                    timerEl.classList.add('text-red-400', 'animate-pulse');
+                    timerBox.classList.add('timer-warning');
+                }
                 if (sisaDetik <= 0 && !ujianTelahDisubmit) submitUjian('Waktu Habis!');
             }, 1000);
             stateSaveInterval = setInterval(saveState, 5000);
         }
 
-        function tampilkanSoal(index) {
+        function tampilkanSoal(index, withAnimation = true) {
             if (index < 0 || index >= soalData.length || !soalData[index]) return;
             if (window.innerWidth < 768) closeSidebar();
             currentIndex = index;
-            const soal = soalData[index], kontenSoal = document.getElementById('kontenSoal'), pilihanContainer = document.getElementById('pilihanContainer');
-            kontenSoal.innerHTML = ''; pilihanContainer.innerHTML = '';
 
-            if (isImageUrl(soal.gambar)) {
-                const img = document.createElement('img'); img.src = soal.gambar; img.alt = 'Gambar Soal ' + soal.no;
-                img.classList.add('max-w-full', 'h-auto', 'mx-auto', 'rounded-xl', 'shadow-xl', 'mb-6', 'border', 'border-yellow-700/50');
-                kontenSoal.appendChild(img);
+            const soal = soalData[index],
+                kontenSoal = document.getElementById('kontenSoal'),
+                pilihanContainer = document.getElementById('pilihanContainer');
+
+            kontenSoal.innerHTML = '';
+            pilihanContainer.innerHTML = '';
+
+            if (withAnimation) {
+                kontenSoal.classList.remove('fade-in-question');
+                void kontenSoal.offsetWidth;
+                kontenSoal.classList.add('fade-in-question');
             }
 
-            kontenSoal.innerHTML += `<div class="flex items-start gap-3 text-gray-100"><div class="bg-yellow-400/20 rounded-lg p-2 mt-1 shrink-0"><svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><p class="text-xl text-gray-100 leading-relaxed flex-1">${soal.pertanyaan}</p></div>`;
+            if (isImageUrl(soal.gambar)) {
+                const imgWrap = document.createElement('div');
+                imgWrap.className = 'mb-6 flex justify-center';
+                const img = document.createElement('img');
+                img.src = soal.gambar;
+                img.alt = 'Gambar Soal ' + soal.no;
+                img.className = 'max-w-full max-h-96 h-auto rounded-2xl shadow-2xl border border-[#F4D77D]/25 bg-[#160F0C]/50 p-1';
+                imgWrap.appendChild(img);
+                kontenSoal.appendChild(imgWrap);
+            }
+
+            kontenSoal.innerHTML += `
+                <div class="flex items-start gap-3.5">
+                    <div class="bg-[#C8963E]/15 border border-[#C8963E]/30 rounded-xl p-2 mt-0.5 shrink-0 text-[#F4D77D]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="${questionFontClasses[fontLevel]} text-[#F5EFE6] leading-relaxed flex-1 font-normal tracking-[0.01em]">${soal.pertanyaan}</p>
+                </div>
+            `;
 
             const hurufTampil = ['A', 'B', 'C', 'D'];
 
-            // PERBAIKAN: Gunakan opsiAcak yang sudah disimpan, jangan panggil shuffleArray lagi
             soal.opsiAcak.forEach((opsi, i) => {
-                const displayKonten = isImageUrl(opsi.teks) ? `<img src="${opsi.teks}" class="max-h-32 w-auto rounded-md border border-gray-700 ml-2">` : `<span class="flex-1 text-gray-200">${opsi.teks}</span>`;
+                const displayKonten = isImageUrl(opsi.teks)
+                    ? `<img src="${opsi.teks}" class="max-h-36 w-auto rounded-xl border border-[#F4D77D]/20 ml-1">`
+                    : `<span class="flex-1 ${optionFontClasses[fontLevel]} leading-relaxed ${String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim() ? 'text-[#F4D77D] font-medium' : 'text-[#F5EFE6]/90'}">${opsi.teks}</span>`;
+
                 const isChecked = String(jawabanPeserta[soal.no] || '').trim() === String(opsi.key).trim();
 
                 const div = document.createElement('div');
-                div.className = 'group border-2 rounded-xl p-4 cursor-pointer transition-all transform hover:scale-[1.01] hover:shadow-lg ' + (isChecked ? 'border-yellow-500 bg-gray-900 shadow-yellow-800/50' : 'border-gray-700 hover:border-yellow-600 bg-gray-700/50');
-                div.innerHTML = `<label class="flex items-start cursor-pointer w-full"><input type="radio" name="jawaban" value="${opsi.key}" ${isChecked ? 'checked' : ''} class="mt-1 mr-4 w-5 h-5 text-yellow-600 focus:ring-2 focus:ring-yellow-500 shrink-0"><div class="flex items-center gap-3 w-full"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-bold shrink-0 ${isChecked ? 'gold-gradient-bg text-gray-900' : 'bg-gray-600 text-gray-200 group-hover:bg-yellow-800'}">${hurufTampil[i]}</span>${displayKonten}</div></label>`;
+                div.className = 'option-card group p-4 cursor-pointer ' + (isChecked ? 'selected' : '');
+                div.innerHTML = `
+                    <label class="flex items-center cursor-pointer w-full gap-3.5">
+                        <input type="radio" name="jawaban" value="${opsi.key}" ${isChecked ? 'checked' : ''} class="sr-only">
+                        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl font-bold text-sm shrink-0 transition-all ${
+                            isChecked
+                                ? 'gold-gradient-bg text-[#160F0C] shadow-md scale-105'
+                                : 'bg-[#2D1E19] text-[#D5B992] border border-[#F4D77D]/20 group-hover:border-[#C8963E] group-hover:text-[#F4D77D]'
+                        }">${hurufTampil[i]}</span>
+                        <div class="flex items-center justify-between gap-3 w-full">
+                            ${displayKonten}
+                            <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                                isChecked
+                                    ? 'bg-[#C8963E] text-[#160F0C]'
+                                    : 'border border-[#D5B992]/30 group-hover:border-[#C8963E]/60'
+                            }">
+                                ${isChecked ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                            </span>
+                        </div>
+                    </label>
+                `;
 
                 div.addEventListener('click', e => {
                     if (e.target.tagName !== 'INPUT') {
                         div.querySelector('input').checked = true;
                         simpanJawaban(opsi.key);
-                        tampilkanSoal(currentIndex);
+                        tampilkanSoal(currentIndex, false);
                     }
                 });
                 div.querySelector('input').addEventListener('change', () => {
                     simpanJawaban(opsi.key);
-                    tampilkanSoal(currentIndex);
+                    tampilkanSoal(currentIndex, false);
                 });
                 pilihanContainer.appendChild(div);
             });
 
             document.getElementById('currentSoalNo').textContent = index + 1;
-            updateStatusJawaban(); updateNavigasi(); updatePetaSoal();
+            updateStatusJawaban();
+            updateNavigasi();
+            updatePetaSoal();
         }
 
         function simpanJawaban(jawaban) {
             const soal = soalData[currentIndex];
             jawabanPeserta[soal.no] = jawaban;
-            updateStatusJawaban(); updatePetaSoal(); updateProgressCount(); saveState();
+            updateStatusJawaban();
+            updatePetaSoal();
+            updateProgressCount();
+            saveState();
         }
 
         function submitUjian(alasan = "Ujian Selesai") {
             if (ujianTelahDisubmit) return;
-            ujianTelahDisubmit = true; clearInterval(timerInterval); clearInterval(stateSaveInterval);
+            ujianTelahDisubmit = true;
+            clearInterval(timerInterval);
+            clearInterval(stateSaveInterval);
             document.getElementById('modalSubmit').classList.add('hidden');
 
             Swal.fire({
-                title: 'Menyimpan Jawaban...', text: 'Mohon tunggu, sistem sedang memproses jawaban Anda.', icon: 'info',
-                showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' },
+                title: 'Menyimpan Jawaban...',
+                text: 'Mohon tunggu, sistem sedang memproses jawaban Anda.',
+                icon: 'info',
+                showConfirmButton: false,
+                allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
             });
 
@@ -489,38 +954,53 @@
             })
                 .then(r => r.json())
                 .then(res => {
-                   if (res.success) {
+                    if (res.success) {
                         const hasilLengkap = { ...res, jawabanDetail: jawabanPeserta };
                         sessionStorage.setItem('peserta', JSON.stringify({ nama: user.nama || '-', noPeserta: user.nik || '-' }));
                         sessionStorage.setItem('hasilUjian_' + selectedExamType, JSON.stringify(hasilLengkap));
                         sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
                         sessionStorage.removeItem('examState_' + selectedExamType);
                         Swal.fire({
-                            title: alasan, text: 'Jawaban Anda telah berhasil disimpan.', icon: 'success',
-                            confirmButtonText: 'Lihat Hasil & Pembahasan', allowOutsideClick: false,
-                            customClass: { popup: 'bg-gray-800 text-white', confirmButton: 'bg-green-600 hover:bg-green-700 font-bold py-3 px-6 rounded-xl' }
+                            title: alasan,
+                            text: 'Jawaban Anda telah berhasil disimpan.',
+                            icon: 'success',
+                            confirmButtonText: 'Lihat Hasil & Pembahasan',
+                            confirmButtonColor: '#C8963E',
+                            allowOutsideClick: false
                         }).then((r) => {
                             if (r.isConfirmed) {
-                                Swal.fire({ title: 'Memuat Halaman Hasil...', text: 'Mohon tunggu sebentar...', icon: 'info', showConfirmButton: false, allowOutsideClick: false, customClass: { popup: 'bg-gray-800 text-white', title: 'text-yellow-400' }, didOpen: () => Swal.showLoading() });
+                                Swal.fire({
+                                    title: 'Memuat Halaman Hasil...',
+                                    text: 'Mohon tunggu sebentar...',
+                                    icon: 'info',
+                                    showConfirmButton: false,
+                                    allowOutsideClick: false,
+                                    didOpen: () => Swal.showLoading()
+                                });
                                 window.location.href = "Hasil.html?jenis=" + selectedExamType + "&nik=" + user.nik;
                             }
                         });
                     } else {
                         ujianTelahDisubmit = false;
-                        Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } });
+                        Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', confirmButtonColor: '#9D446E' });
                     }
                 })
                 .catch(err => {
                     ujianTelahDisubmit = false;
-                    Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', customClass: { popup: 'bg-gray-800 text-white' } });
+                    Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', confirmButtonColor: '#9D446E' });
                 });
         }
 
         function updateStatusJawaban() {
             if (!soalData || !soalData[currentIndex]) return;
             const s = document.getElementById('statusJawaban');
-            if (jawabanPeserta[soalData[currentIndex].no]) { s.textContent = '✓ Sudah Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-green-500 text-white'; }
-            else { s.textContent = 'Belum Dijawab'; s.className = 'px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-900/10 backdrop-blur-sm text-gray-300'; }
+            if (jawabanPeserta[soalData[currentIndex].no]) {
+                s.textContent = '✓ Sudah Dijawab';
+                s.className = 'px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40';
+            } else {
+                s.textContent = 'Belum Dijawab';
+                s.className = 'px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2D1E19]/80 text-[#D5B992] border border-[#F4D77D]/20';
+            }
         }
 
         function updateNavigasi() {
@@ -528,17 +1008,20 @@
             document.getElementById('btnPrev').disabled = currentIndex === 0;
             const isLast = currentIndex === soalData.length - 1;
             document.getElementById('btnNext').classList.toggle('hidden', isLast);
-            document.getElementById('btnNext').classList.toggle('block', !isLast);
+            document.getElementById('btnNext').classList.toggle('flex', !isLast);
             document.getElementById('btnSubmit').classList.toggle('hidden', !isLast);
-            document.getElementById('btnSubmit').classList.toggle('block', isLast);
+            document.getElementById('btnSubmit').classList.toggle('flex', isLast);
         }
 
         function renderPetaSoal() {
-            const p = document.getElementById('petaSoal'); p.innerHTML = '';
+            const p = document.getElementById('petaSoal');
+            p.innerHTML = '';
             soalData.forEach((s, i) => {
-                const btn = document.createElement('button'); btn.textContent = i + 1;
-                btn.className = 'w-9 h-9 rounded-lg font-bold transition-all transform hover:scale-110 shadow-sm';
-                btn.onclick = () => tampilkanSoal(i); p.appendChild(btn);
+                const btn = document.createElement('button');
+                btn.textContent = i + 1;
+                btn.className = 'soal-btn soal-btn-unanswered';
+                btn.onclick = () => tampilkanSoal(i);
+                p.appendChild(btn);
             });
             updatePetaSoal();
         }
@@ -547,14 +1030,26 @@
             document.querySelectorAll('#petaSoal button').forEach((btn, i) => {
                 if (!soalData[i]) return;
                 const dijawab = jawabanPeserta[soalData[i].no];
-                let base = 'w-9 h-9 rounded-lg font-bold transition-all transform hover:scale-110 shadow-sm ';
-                if (dijawab) btn.className = base + 'bg-gradient-to-br from-green-400 to-green-600 text-white hover:opacity-80';
-                else btn.className = base + 'bg-gray-500 text-white hover:bg-gray-400';
-                if (i === currentIndex) btn.className = base + 'bg-blue-500 text-white ring-4 ring-blue-400 ring-offset-2 ring-offset-gray-900 scale-110';
+                let cls = 'soal-btn ';
+                if (i === currentIndex) {
+                    cls += 'soal-btn-active';
+                } else if (dijawab) {
+                    cls += 'soal-btn-answered';
+                } else {
+                    cls += 'soal-btn-unanswered';
+                }
+                btn.className = cls;
             });
         }
 
-        function updateProgressCount() { document.getElementById('progressCount').textContent = Object.keys(jawabanPeserta).length; }
+        function updateProgressCount() {
+            const count = Object.keys(jawabanPeserta).length;
+            const total = soalData.length || 0;
+            document.getElementById('progressCount').textContent = count;
+            const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+            document.getElementById('progressPercent').textContent = pct + '%';
+            document.getElementById('progressBarFill').style.width = pct + '%';
+        }
 
         document.getElementById('btnPrev').addEventListener('click', () => tampilkanSoal(currentIndex - 1));
         document.getElementById('btnNext').addEventListener('click', () => tampilkanSoal(currentIndex + 1));
@@ -582,7 +1077,6 @@
 
         // 1. Tangkap event rotasi layar HP secara eksplisit
         window.addEventListener('orientationchange', function () {
-            // Beri jeda sebentar agar browser selesai merender ukuran layar baru
             setTimeout(() => {
                 initialWidth = window.innerWidth;
                 initialHeight = window.innerHeight;
@@ -596,18 +1090,14 @@
             let currentWidth = window.innerWidth;
             let currentHeight = window.innerHeight;
 
-            // Deteksi apakah perubahan ini karena rotasi layar (Width baru mirip Height lama)
-            // Toleransi 150px karena adanya bar notifikasi/URL di browser HP
             let isRotation = Math.abs(currentWidth - initialHeight) < 150 || Math.abs(currentHeight - initialWidth) < 150;
 
             if (isRotation) {
-                // Jika itu rotasi layar, perbarui nilai acuan dan hentikan pengecekan cheat
                 initialWidth = currentWidth;
                 initialHeight = currentHeight;
                 return;
             }
 
-            // Jika lebar berubah drastis tapi BUKAN karena rotasi, berarti Layar Belah / Split Screen
             if (Math.abs(currentWidth - initialWidth) > 50) {
                 submitUjian("Sistem Mendeteksi Penggunaan Layar Belah (Split Screen)!");
             }
