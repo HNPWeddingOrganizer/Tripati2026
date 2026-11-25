@@ -469,13 +469,14 @@
     <script>
         // KONFIGURASI API URL (GANTI DENGAN URL APPS SCRIPT ANDA)
         const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec";
-        
+        const BHINNEKASTRA_DETAIL_URL = "https://dppi-pendaftaranbhinnekastra2026.vercel.app/detail.html";
+
         let user = {};
         let selectedExamType = '';
 
         window.onload = function() {
             const sid = sessionStorage.getItem('sessionId');
-            
+
             // Redirect jika belum login
             if(!sid) return window.location.href = "index.html";
 
@@ -487,13 +488,13 @@
             .then(res => {
                 if(res.success) {
                     user = res.data;
-                    
+
                     // Populate Dashboard
                     document.getElementById('pNama').textContent = user.nama || 'Nama Tidak Ditemukan';
                     document.getElementById('pSekolah').textContent = user.sekolah || '-';
                     document.getElementById('pNik').textContent = user.nik || '-';
                     document.getElementById('pHp').textContent = user.nohp || '-';
-                    
+
                     const img = document.getElementById('pFoto');
                     img.src = user.foto || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
                     img.onload = () => img.classList.remove('img-loading');
@@ -505,9 +506,8 @@
         };
 
         function logout() {
-            sessionStorage.removeItem('sessionId');
-            sessionStorage.removeItem('peserta');
-            window.location.href = "index.html";
+            sessionStorage.clear();
+            window.location.href = BHINNEKASTRA_DETAIL_URL;
         }
 
         function backToHome() {
