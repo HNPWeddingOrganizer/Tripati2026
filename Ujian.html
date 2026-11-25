@@ -608,7 +608,7 @@
                     </p>
                 </div>
                 <p class="text-xs sm:text-sm text-[#D5B992] leading-relaxed text-center mb-6">
-                    Yakin ingin menyelesaikan ujian? Jawaban akan langsung disimpan ke sistem dan tidak dapat diubah kembali.
+                    Yakin ingin menyelesaikan ujian? Jawaban akan langsung disimpan ke sistem.
                 </p>
                 <div class="flex gap-3">
                     <button id="btnBatal"
@@ -621,7 +621,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxInBWqllNbKNNfTa8kY6rpAWIB634SLuA6oilcnKRKIL6Bg2vuHTgi0JanjSnqIS8/exec";
 
         const urlParams = new URLSearchParams(window.location.search);
         const selectedExamType = urlParams.get('jenis') || 'PIP';
@@ -644,7 +644,7 @@
         }
 
         // ==========================================
-        // PERSISTENSI JAWABAN (TAHAN LOGOUT & RELOAD)
+        // PERSISTENSI JAWABAN (TAHAN LOGOUT, KELUAR & SUBMIT)
         // ==========================================
         function getPersistentStorageKey() {
             const nikKey = String(user.nik || urlNik || 'guest').trim();
@@ -669,11 +669,9 @@
         function loadLocalSavedState() {
             const key = getPersistentStorageKey();
             try {
-                // Prioritaskan localStorage (tidak terhapus saat logout / tutup browser)
                 const localRaw = localStorage.getItem(key);
                 if (localRaw) return JSON.parse(localRaw);
 
-                // Fallback ke sessionStorage jika ada sisa state lama
                 const sessionRaw = sessionStorage.getItem(key) || sessionStorage.getItem('examState_' + selectedExamType);
                 if (sessionRaw) return JSON.parse(sessionRaw);
             } catch (e) {
@@ -711,8 +709,8 @@
             }
         }
 
-        function saveState() {
-            if (soalData.length === 0 || ujianTelahDisubmit) return;
+        function saveState(isSubmitted = false) {
+            if (soalData.length === 0 || (ujianTelahDisubmit && !isSubmitted)) return;
             const key = getPersistentStorageKey();
             const opsiOrderMap = {};
             soalData.forEach(s => {
@@ -723,8 +721,9 @@
                 nik: String(user.nik || urlNik || '').trim(),
                 jenis: selectedExamType,
                 jawabanPeserta: jawabanPeserta,
-                sisaDetik: sisaDetik,
-                currentIndex: currentIndex,
+                sisaDetik: isSubmitted ? 0 : sisaDetik,
+                currentIndex: isSubmitted ? 0 : currentIndex,
+                submitted: isSubmitted,
                 opsiOrderMap: opsiOrderMap,
                 updatedAt: Date.now()
             };
@@ -756,7 +755,7 @@
                 })
                     .then(r => r.json())
                     .then(() => setSyncIndicator('saved'))
-                    .catch(() => setSyncIndicator('saved')); // Tetap aman di localStorage
+                    .catch(() => setSyncIndicator('saved'));
             };
 
             if (immediate) {
@@ -765,21 +764,20 @@
             } else {
                 if (serverSyncTimer) clearTimeout(serverSyncTimer);
                 setSyncIndicator('saving');
-                serverSyncTimer = setTimeout(executeSync, 1200);
+                serverSyncTimer = setTimeout(executeSync, 500);
             }
         }
 
-        // Pastikan state tersimpan saat halaman ditutup / refresh / pindah
         window.addEventListener('pagehide', () => {
             if (!ujianTelahDisubmit && soalData.length > 0) {
-                saveState();
+                saveState(false);
                 syncProgressToServer(true);
             }
         });
 
         window.addEventListener('beforeunload', () => {
             if (!ujianTelahDisubmit && soalData.length > 0) {
-                saveState();
+                saveState(false);
             }
         });
 
@@ -787,13 +785,11 @@
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             const sid = sessionStorage.getItem('sessionId');
 
-            // Proteksi: Harus login dan bawa NIK & Jenis di URL
             if (!sid || !urlNik) return window.location.href = "index.html";
 
             document.title = `Ujian ${selectedExamType} - Sistem CAT TRIPATI`;
             document.getElementById('labelJenisUjian').innerText = `UJIAN ${selectedExamType}`;
 
-            // Tarik Session
             fetch(API_URL, {
                 method: "POST",
                 body: JSON.stringify({ action: "getUserSession", sessionId: sid })
@@ -827,7 +823,7 @@
 
             if (savedState) {
                 jawabanPeserta = cleanAnswersMap(savedState.jawabanPeserta);
-                currentIndex = Number(savedState.currentIndex) || 0;
+                currentIndex = savedState.submitted ? 0 : (Number(savedState.currentIndex) || 0);
             }
 
             Promise.all([
@@ -837,12 +833,31 @@
             ])
                 .then(([waktuRes, soalRes, savedRes]) => {
                     const defaultDetik = ((waktuRes && waktuRes.success && waktuRes.waktu) ? Number(waktuRes.waktu) : 60) * 60;
-                    let waktuMulaiDetik = defaultDetik;
+                    const serverUpdatedAt = (savedRes && savedRes.updatedAt) ? Number(savedRes.updatedAt) : 0;
+                    const localUpdatedAt = (savedState && savedState.updatedAt) ? Number(savedState.updatedAt) : 0;
+                    const wasAdminReset = Boolean(savedRes && savedRes.isReset && serverUpdatedAt >= localUpdatedAt);
 
-                    if (savedState && Number(savedState.sisaDetik) > 0) {
-                        waktuMulaiDetik = Math.min(Number(savedState.sisaDetik), defaultDetik);
-                    } else if (savedRes && savedRes.success && Number(savedRes.sisaDetik) > 0) {
-                        waktuMulaiDetik = Math.min(Number(savedRes.sisaDetik), defaultDetik);
+                    if (wasAdminReset) {
+                        clearSavedState();
+                        jawabanPeserta = {};
+                        currentIndex = 0;
+                    } else if (savedRes && savedRes.success && savedRes.data && typeof savedRes.data === 'object') {
+                        const serverAnswers = cleanAnswersMap(savedRes.data);
+                        if (serverUpdatedAt > localUpdatedAt) {
+                            jawabanPeserta = { ...jawabanPeserta, ...serverAnswers };
+                        } else {
+                            jawabanPeserta = { ...serverAnswers, ...jawabanPeserta };
+                        }
+                    }
+
+                    // Tentukan timer: jika baru mulai / setelah reset / masuk ulang setelah submit -> durasi penuh
+                    let waktuMulaiDetik = defaultDetik;
+                    if (!wasAdminReset) {
+                        if (savedState && !savedState.submitted && Number(savedState.sisaDetik) > 0) {
+                            waktuMulaiDetik = Math.min(Number(savedState.sisaDetik), defaultDetik);
+                        } else if (savedRes && savedRes.success && savedRes.status !== 'SUBMITTED' && Number(savedRes.sisaDetik) > 0) {
+                            waktuMulaiDetik = Math.min(Number(savedRes.sisaDetik), defaultDetik);
+                        }
                     }
 
                     startTimer(waktuMulaiDetik);
@@ -853,9 +868,8 @@
                     }
 
                     soalData = soalRes.data;
-                    const savedOpsiOrder = (savedState && savedState.opsiOrderMap) ? savedState.opsiOrderMap : {};
+                    const savedOpsiOrder = (!wasAdminReset && savedState && savedState.opsiOrderMap) ? savedState.opsiOrderMap : {};
 
-                    // Acak opsi sekali saja, atau pulihkan urutan opsi sebelumnya agar konsisten
                     soalData.forEach(soal => {
                         let opsiMap = {};
                         let opsiArray = [];
@@ -871,12 +885,6 @@
                             soal.opsiAcak = shuffleArray(opsiArray);
                         }
                     });
-
-                    // Gabungkan jawaban dari server (jika ada) dan jawaban tersimpan di perangkat
-                    if (savedRes && savedRes.success && savedRes.data && typeof savedRes.data === 'object') {
-                        const serverAnswers = cleanAnswersMap(savedRes.data);
-                        jawabanPeserta = { ...serverAnswers, ...jawabanPeserta };
-                    }
 
                     if (currentIndex < 0 || currentIndex >= soalData.length) {
                         currentIndex = 0;
@@ -904,7 +912,7 @@
 
                     renderPetaSoal();
                     tampilkanSoal(currentIndex);
-                    saveState();
+                    saveState(false);
                     updateProgressCount();
                 })
                 .catch(err => {
@@ -984,7 +992,7 @@
                 updateTimerDisplay();
                 if (sisaDetik <= 0 && !ujianTelahDisubmit) submitUjian('Waktu Habis!');
             }, 1000);
-            stateSaveInterval = setInterval(saveState, 3000);
+            stateSaveInterval = setInterval(() => saveState(false), 3000);
         }
 
         function tampilkanSoal(index, withAnimation = true) {
@@ -1078,7 +1086,7 @@
             updateStatusJawaban();
             updateNavigasi();
             updatePetaSoal();
-            saveState();
+            saveState(false);
         }
 
         function simpanJawaban(jawaban) {
@@ -1087,7 +1095,7 @@
             updateStatusJawaban();
             updatePetaSoal();
             updateProgressCount();
-            saveState();
+            saveState(false);
             syncProgressToServer(false);
         }
 
@@ -1098,6 +1106,9 @@
             clearInterval(stateSaveInterval);
             if (serverSyncTimer) clearTimeout(serverSyncTimer);
             document.getElementById('modalSubmit').classList.add('hidden');
+
+            // Simpan jawaban lokal sebagai state tersubmit agar tidak hilang jika masuk lagi
+            saveState(true);
 
             Swal.fire({
                 title: 'Menyimpan Jawaban...',
@@ -1126,8 +1137,8 @@
                         sessionStorage.setItem('hasilUjian_' + selectedExamType, JSON.stringify(hasilLengkap));
                         sessionStorage.setItem('soalData_' + selectedExamType, JSON.stringify(soalData));
 
-                        // Hapus cadangan draft setelah jawaban resmi tersimpan
-                        clearSavedState();
+                        // Pertahankan jawaban tersimpan di localStorage agar tetap muncul saat masuk lagi
+                        saveState(true);
 
                         Swal.fire({
                             title: alasan,
@@ -1151,13 +1162,13 @@
                         });
                     } else {
                         ujianTelahDisubmit = false;
-                        saveState();
+                        saveState(false);
                         Swal.fire({ title: 'Gagal Menyimpan', text: res.message, icon: 'error', confirmButtonColor: '#9D446E' });
                     }
                 })
                 .catch(err => {
                     ujianTelahDisubmit = false;
-                    saveState();
+                    saveState(false);
                     Swal.fire({ title: 'Terjadi Kesalahan', text: err.message, icon: 'error', confirmButtonColor: '#9D446E' });
                 });
         }
