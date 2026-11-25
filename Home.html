@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard - Sistem CAT TRIPATI</title>
+    <title>Hasil Ujian - Sistem CAT TRIPATI</title>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_dppi_512.png">
+    <link rel="shortcut icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_dppi_512.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
             /* Premium Earthy Palette */
             --bg-main: #160F0C;
-            --glass-bg: rgba(45, 30, 25, 0.4);
-            --glass-bg-strong: rgba(34, 22, 18, 0.72);
-            --glass-border: rgba(244, 215, 125, 0.15);
+            --glass-bg: rgba(45, 30, 25, 0.45);
+            --glass-bg-card: rgba(36, 24, 19, 0.65);
+            --glass-border: rgba(244, 215, 125, 0.16);
             --color-primary: #C8963E;
             --color-primary-hover: #A87B32;
             --color-accent: #9D446E;
             --text-main: #F4D77D;
             --text-muted: #D5B992;
+            --text-reading: #F5EFE6;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
-            color: var(--text-main);
+            color: var(--text-reading);
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
@@ -44,33 +46,33 @@
         .shape {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.5;
-            animation: float 20s infinite alternate ease-in-out;
+            filter: blur(85px);
+            opacity: 0.45;
+            animation: float 22s infinite alternate ease-in-out;
         }
 
         .shape-1 {
-            width: 500px;
-            height: 500px;
+            width: 520px;
+            height: 520px;
             background: rgba(200, 150, 62, 0.25);
-            top: -20%;
+            top: -18%;
             left: -10%;
         }
 
         .shape-2 {
-            width: 400px;
-            height: 400px;
-            background: rgba(157, 68, 110, 0.25);
-            bottom: -10%;
+            width: 420px;
+            height: 420px;
+            background: rgba(157, 68, 110, 0.26);
+            bottom: -12%;
             right: -10%;
             animation-delay: -7s;
         }
 
         .shape-3 {
-            width: 350px;
-            height: 350px;
+            width: 360px;
+            height: 360px;
             background: rgba(243, 146, 104, 0.2);
-            top: 40%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
             animation-delay: -12s;
@@ -78,84 +80,48 @@
 
         @keyframes float {
             0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(60px, 40px) scale(1.1); }
-            100% { transform: translate(-40px, 60px) scale(0.9); }
+            50% { transform: translate(55px, 38px) scale(1.08); }
+            100% { transform: translate(-38px, 55px) scale(0.92); }
         }
 
-        /* --- GLASSMORPHISM CONTAINERS --- */
-        .navbar-glass {
-            background: rgba(22, 15, 12, 0.72);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
+        /* --- GLASSMORPHISM SURFACES --- */
         .glass-container {
-            background: var(--glass-bg);
+            background: var(--glass-bg-card);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             border-radius: 32px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 28px 60px -15px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.06);
             border: 1px solid var(--glass-border);
         }
 
         .glass-subcard {
-            background: rgba(22, 15, 12, 0.45);
-            border: 1px solid rgba(244, 215, 125, 0.1);
+            background: rgba(22, 15, 12, 0.5);
+            border: 1px solid rgba(244, 215, 125, 0.12);
             border-radius: 22px;
         }
 
-        .exam-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--glass-border);
+        .score-showcase {
+            background: radial-gradient(circle at top, rgba(200, 150, 62, 0.16) 0%, rgba(22, 15, 12, 0.62) 72%);
+            border: 1px solid rgba(244, 215, 125, 0.22);
             border-radius: 26px;
-            box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 1px rgba(244, 215, 125, 0.1);
         }
 
-        .exam-card-pip:hover {
-            border-color: rgba(157, 68, 110, 0.75);
-            background: rgba(157, 68, 110, 0.16);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 35px -10px rgba(157, 68, 110, 0.35);
-        }
-
-        .exam-card-tiu:hover {
-            border-color: rgba(200, 150, 62, 0.75);
-            background: rgba(200, 150, 62, 0.14);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 35px -10px rgba(200, 150, 62, 0.3);
-        }
-
-        /* --- AVATAR & ANIMATED RINGS --- */
-        .avatar-wrapper {
+        /* --- ANIMATED STATUS RINGS --- */
+        .status-icon-wrapper {
             position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 14px auto;
+            width: 112px;
+            height: 112px;
+            margin: 0 auto 18px auto;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .avatar-img {
-            width: 92px;
-            height: 92px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: rgba(22, 15, 12, 0.9);
-            border: 2px solid rgba(244, 215, 125, 0.45);
-            box-shadow: 0 8px 30px rgba(200, 150, 62, 0.3);
-            position: relative;
-            z-index: 2;
-        }
-
         .rings {
             position: absolute;
             border-radius: 50%;
-            border: 1px solid rgba(244, 215, 125, 0.12);
+            border: 1px solid rgba(244, 215, 125, 0.14);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -163,30 +129,30 @@
         }
 
         .ring-1 {
-            width: 112px;
-            height: 112px;
+            width: 100px;
+            height: 100px;
             animation: ping-ring 3s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
 
         .ring-2 {
-            width: 136px;
-            height: 136px;
-            border-color: rgba(244, 215, 125, 0.06);
+            width: 126px;
+            height: 126px;
+            border-color: rgba(244, 215, 125, 0.07);
             animation: ping-ring 3s cubic-bezier(0, 0, 0.2, 1) infinite;
             animation-delay: 0.6s;
         }
 
         .ring-3 {
-            width: 128px;
-            height: 128px;
+            width: 118px;
+            height: 118px;
             border-style: dashed;
-            border-color: rgba(244, 215, 125, 0.14);
+            border-color: rgba(244, 215, 125, 0.18);
             animation: spin-slow 18s linear infinite;
         }
 
         @keyframes ping-ring {
             75%, 100% {
-                transform: translate(-50%, -50%) scale(1.35);
+                transform: translate(-50%, -50%) scale(1.38);
                 opacity: 0;
             }
         }
@@ -203,94 +169,165 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%);
+        }
+
         .btn-gold {
             background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%);
             color: #160F0C !important;
             border-radius: 100px;
             font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(200, 150, 62, 0.28);
+            transition: all 0.25s ease;
+            box-shadow: 0 12px 28px rgba(200, 150, 62, 0.28);
         }
 
         .btn-gold:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(200, 150, 62, 0.42);
+            box-shadow: 0 16px 34px rgba(200, 150, 62, 0.44);
             filter: brightness(1.05);
         }
 
+        .btn-accent {
+            background: linear-gradient(135deg, #B55482 0%, #9D446E 100%);
+            color: #FFFFFF !important;
+            border-radius: 100px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 24px rgba(157, 68, 110, 0.3);
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(157, 68, 110, 0.45);
+            filter: brightness(1.06);
+        }
+
         .btn-outline-gold {
-            background: transparent;
+            background: rgba(22, 15, 12, 0.45);
             color: var(--text-main);
-            border: 1px solid var(--color-primary);
+            border: 1px solid rgba(200, 150, 62, 0.55);
             border-radius: 100px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
-        .btn-outline-gold:hover:not(:disabled) {
-            background: rgba(200, 150, 62, 0.14);
-            box-shadow: 0 0 20px rgba(200, 150, 62, 0.22);
+        .btn-outline-gold:hover {
+            background: rgba(200, 150, 62, 0.16);
+            border-color: var(--text-main);
+            transform: translateY(-2px);
+            box-shadow: 0 0 22px rgba(200, 150, 62, 0.2);
         }
 
-        .btn-outline-gold:disabled {
-            opacity: 0.4;
-            border-color: rgba(213, 185, 146, 0.25);
+        /* --- SCORE GAUGE --- */
+        .score-ring-progress {
+            transition: stroke-dashoffset 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+            filter: drop-shadow(0 0 10px rgba(244, 215, 125, 0.45));
+        }
+
+        /* --- FILTER TABS PEMBAHASAN --- */
+        .filter-pill {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(244, 215, 125, 0.16);
             color: var(--text-muted);
-            cursor: not-allowed;
+            background: rgba(22, 15, 12, 0.45);
         }
 
-        .img-loading {
-            animation: pulse 1.5s infinite;
-            background-color: #2b1d17;
+        .filter-pill:hover {
+            border-color: rgba(200, 150, 62, 0.5);
+            color: var(--text-main);
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+        .filter-pill.active {
+            background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%);
+            color: #160F0C;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(200, 150, 62, 0.3);
         }
 
+        /* --- SCROLLBAR --- */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(22, 15, 12, 0.6);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(200, 150, 62, 0.45);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(200, 150, 62, 0.8);
+        }
+
+        /* --- ANIMATIONS --- */
         .fade-in {
-            animation: fadeIn 0.65s ease forwards;
+            animation: fadeIn 0.75s ease-out forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(16px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* SweetAlert2 Custom Theme Override */
+        /* --- SWEETALERT2 EARTHY OVERRIDE --- */
         .swal2-popup {
             background: rgba(34, 22, 18, 0.96) !important;
-            border: 1px solid rgba(244, 215, 125, 0.2) !important;
+            border: 1px solid rgba(244, 215, 125, 0.22) !important;
             border-radius: 28px !important;
             color: #F4D77D !important;
             backdrop-filter: blur(20px);
         }
 
-        .swal2-html-container, .swal2-validation-message {
+        .swal2-title {
+            color: #F4D77D !important;
+        }
+
+        .swal2-html-container {
             color: #D5B992 !important;
         }
 
-        .swal2-validation-message {
-            background: rgba(157, 68, 110, 0.2) !important;
-            border-radius: 12px !important;
-        }
-
-        .swal2-input {
-            background: rgba(22, 15, 12, 0.75) !important;
-            border: 1px solid rgba(244, 215, 125, 0.25) !important;
-            border-radius: 14px !important;
-            color: #F4D77D !important;
-            box-shadow: none !important;
-        }
-
-        .swal2-input:focus {
-            border-color: #C8963E !important;
+        /* --- PRINT STYLES (Rapi untuk Cetak / Simpan PDF) --- */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #111827 !important;
+                display: block !important;
+                padding: 0 !important;
+            }
+            .bg-shapes, .no-print, .rings {
+                display: none !important;
+            }
+            .glass-container, .glass-subcard, .score-showcase {
+                background: #ffffff !important;
+                backdrop-filter: none !important;
+                box-shadow: none !important;
+                border: 1.5px solid #d1d5db !important;
+                color: #111827 !important;
+            }
+            .title-gradient {
+                background: none !important;
+                -webkit-text-fill-color: #111827 !important;
+                color: #111827 !important;
+            }
+            #namaPeserta, #noPeserta, #nilaiAkhir, #jumlahBenar, #jumlahSalah, #totalSoal, p, span {
+                color: #111827 !important;
+            }
+            #statusKelulusan {
+                border: 2px solid #374151 !important;
+                background: #f9fafb !important;
+            }
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
 
     <!-- Background Shapes (Glassmorphism Blobs) -->
     <div class="bg-shapes">
@@ -299,368 +336,556 @@
         <div class="shape shape-3"></div>
     </div>
 
-    <div id="dashboardWrapper" class="relative z-10 min-h-screen flex flex-col">
-        <!-- Navbar Dashboard -->
-        <header class="sticky top-0 z-50 navbar-glass px-4 py-3.5 shadow-lg">
-            <div class="max-w-md mx-auto flex justify-between items-center">
+    <!-- LOADER -->
+    <div id="loader" class="relative z-10 glass-container px-10 py-12 text-center max-w-sm w-full fade-in">
+        <div class="relative w-16 h-16 mx-auto mb-5 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-2 border-[#F4D77D]/15"></div>
+            <div class="w-16 h-16 animate-spin rounded-full border-2 border-t-[#F4D77D] border-r-[#C8963E] border-b-transparent border-l-transparent"></div>
+        </div>
+        <p class="title-gradient font-bold text-base tracking-widest uppercase">Memuat Hasil</p>
+        <p class="text-xs text-[#D5B992]/80 mt-1.5">Menyiapkan rekap nilai ujian Anda...</p>
+    </div>
+
+    <!-- MAIN CONTAINER HASIL UJIAN -->
+    <div id="mainContainer" class="relative z-10 glass-container w-full max-w-2xl p-6 sm:p-9 fade-in hidden my-4">
+
+        <!-- Header Brand Kecil -->
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#F4D77D]/12">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-[#160F0C]/80 border border-[#F4D77D]/25 p-1 flex items-center justify-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" alt="Logo DPPI"
+                        class="w-full h-full object-contain"
+                        onerror="this.src='https://placehold.co/100/160F0C/F4D77D?text=DPPI'">
+                </div>
+                <div class="leading-tight">
+                    <p class="text-[11px] font-bold tracking-widest uppercase text-[#F4D77D]">Portal TRIPATI</p>
+                    <p class="text-[10px] text-[#D5B992]/75">DPPI Kota Yogyakarta</p>
+                </div>
+            </div>
+            <span class="px-3.5 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase bg-[#C8963E]/15 text-[#F4D77D] border border-[#C8963E]/35">
+                CAT <span id="badgeJenisUjian">PIP</span>
+            </span>
+        </div>
+
+        <!-- Ikon Status & Judul -->
+        <div class="text-center mb-6">
+            <div class="status-icon-wrapper">
+                <div class="rings ring-1"></div>
+                <div class="rings ring-2"></div>
+                <div class="rings ring-3"></div>
+                <div id="iconContainer" class="relative z-10 w-20 h-20 rounded-full flex items-center justify-center bg-[#2D1E19] border border-[#F4D77D]/30 shadow-2xl"></div>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold title-gradient tracking-tight mb-1">
+                Hasil Ujian <span id="labelJenisUjian"></span>
+            </h1>
+            <p class="text-[#D5B992]/80 text-xs sm:text-sm">Ringkasan resmi pencapaian evaluasi CAT Anda</p>
+        </div>
+
+        <!-- Data Peserta -->
+        <div class="glass-subcard p-4 sm:p-5 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-[#160F0C]/80 border border-[#F4D77D]/20 p-1 flex items-center justify-center shadow-[0_0_15px_rgba(200,150,62,0.2)]">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" alt="Logo DPPI" class="h-full w-full object-contain" onerror="this.src='https://placehold.co/100/160F0C/F4D77D?text=DPPI'">
+                    <div class="w-10 h-10 rounded-xl bg-[#C8963E]/15 border border-[#C8963E]/30 flex items-center justify-center text-[#F4D77D] shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
                     </div>
-                    <div>
-                        <h1 class="font-bold text-sm title-gradient tracking-wide leading-tight">DASHBOARD PESERTA</h1>
-                        <p class="text-[11px] text-[#D5B992]/80 font-medium">TRIPATI 2026</p>
+                    <div class="min-w-0">
+                        <p class="text-[10px] text-[#D5B992]/75 uppercase tracking-wider font-semibold">Nama Peserta</p>
+                        <p class="font-bold text-[#F5EFE6] text-sm sm:text-base truncate" id="namaPeserta">-</p>
                     </div>
                 </div>
-                <button onclick="logout()" class="text-xs bg-[#9D446E]/20 text-[#F4D77D] px-3.5 py-1.5 rounded-full border border-[#9D446E]/60 hover:bg-[#9D446E] hover:text-white transition font-semibold flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
-                    Logout
+                <div class="flex items-center gap-3 sm:border-l sm:border-[#F4D77D]/12 sm:pl-4">
+                    <div class="w-10 h-10 rounded-xl bg-[#9D446E]/20 border border-[#9D446E]/35 flex items-center justify-center text-[#F4D77D] shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .883-.393 1.627-1.08 1.998"></path>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-[10px] text-[#D5B992]/75 uppercase tracking-wider font-semibold">Nomor Peserta</p>
+                        <p class="font-bold font-mono text-[#F4D77D] text-sm sm:text-base truncate" id="noPeserta">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nilai Utama dengan Circular Gauge -->
+        <div class="score-showcase p-6 sm:p-7 mb-6 text-center">
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[#D5B992] mb-4">Nilai Akhir</p>
+
+            <!-- SVG Circular Gauge -->
+            <div class="relative w-44 h-44 mx-auto mb-6 flex items-center justify-center">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 160 160">
+                    <defs>
+                        <linearGradient id="scoreGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#F4D77D" />
+                            <stop offset="55%" stop-color="#C8963E" />
+                            <stop offset="100%" stop-color="#9D446E" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(244, 215, 125, 0.12)" stroke-width="10" />
+                    <circle id="scoreRingCircle" cx="80" cy="80" r="68" fill="none"
+                        stroke="url(#scoreGoldGrad)" stroke-width="10" stroke-linecap="round"
+                        stroke-dasharray="427.26" stroke-dashoffset="427.26" class="score-ring-progress" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-5xl sm:text-6xl font-black title-gradient tracking-tight leading-none" id="nilaiAkhir">0</span>
+                    <span class="text-[10px] uppercase tracking-widest text-[#D5B992]/75 font-semibold mt-1.5">Skala 100</span>
+                </div>
+            </div>
+
+            <!-- 3 Statistik Pill: Benar, Salah, Total -->
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-3.5">
+                <div class="bg-emerald-500/10 border border-emerald-400/25 rounded-2xl py-3 px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-emerald-300/80 font-semibold mb-0.5">Benar</p>
+                    <p class="text-xl sm:text-2xl font-extrabold text-emerald-400" id="jumlahBenar">-</p>
+                </div>
+                <div class="bg-[#9D446E]/15 border border-[#9D446E]/40 rounded-2xl py-3 px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-rose-300/85 font-semibold mb-0.5">Salah</p>
+                    <p class="text-xl sm:text-2xl font-extrabold text-rose-300" id="jumlahSalah">-</p>
+                </div>
+                <div class="bg-[#C8963E]/12 border border-[#C8963E]/30 rounded-2xl py-3 px-2">
+                    <p class="text-[10px] uppercase tracking-wider text-[#D5B992]/85 font-semibold mb-0.5">Total Soal</p>
+                    <p class="text-xl sm:text-2xl font-extrabold text-[#F4D77D]" id="totalSoal">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Kelulusan -->
+        <div id="statusKelulusan" class="rounded-2xl p-4 sm:p-5 mb-6 text-center border text-sm"></div>
+
+        <!-- Tombol Aksi -->
+        <div class="space-y-3 no-print">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Tombol Lihat Pembahasan -->
+                <button id="btnPembahasan" onclick="bukaPembahasan()"
+                    class="hidden flex-1 btn-accent py-3.5 px-6 text-sm items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <span>Lihat Pembahasan</span>
+                </button>
+
+                <!-- Tombol Cetak Hasil -->
+                <button onclick="window.print()"
+                    class="flex-1 btn-outline-gold py-3.5 px-6 text-sm flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m0 0v2a2 2 0 002 2h6a2 2 0 002-2v-2M9 14h6"></path>
+                    </svg>
+                    <span>Cetak Hasil</span>
                 </button>
             </div>
-        </header>
 
-        <main class="w-full max-w-md mx-auto px-5 py-6 flex-1 flex flex-col justify-between">
-            <!-- View 1: Home Dashboard & Pilihan Ruang Ujian -->
-            <div id="homeView" class="space-y-6 fade-in">
-                <!-- Kartu Profil Peserta -->
-                <div class="glass-container p-6 relative overflow-hidden">
-                    <div class="absolute top-4 right-4 z-10">
-                        <button onclick="editProfile()" class="text-xs bg-[#160F0C]/60 hover:bg-[#C8963E] hover:text-[#160F0C] text-[#D5B992] px-3 py-1.5 rounded-full transition flex items-center gap-1.5 border border-[#F4D77D]/20 font-medium">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                            Edit
-                        </button>
+            <!-- Tombol Kembali ke Beranda -->
+            <button onclick="kembaliKeHome()"
+                class="w-full btn-gold py-3.5 px-6 text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span>KEMBALI KE BERANDA</span>
+            </button>
+        </div>
+
+        <!-- Footer Kecil -->
+        <p class="text-center text-[10px] text-[#D5B992]/45 tracking-widest uppercase mt-6">
+            Sistem CAT Terintegrasi &bull; DPPI Kota Yogyakarta
+        </p>
+    </div>
+
+    <!-- MODAL PEMBAHASAN -->
+    <div id="modalPembahasan" class="fixed inset-0 bg-[#160F0C]/90 backdrop-blur-md z-50 hidden flex flex-col p-2.5 sm:p-6">
+        <div class="max-w-4xl w-full mx-auto glass-container overflow-hidden flex flex-col h-full border border-[#F4D77D]/25">
+            <!-- Header Modal -->
+            <div class="px-5 sm:px-6 py-4 bg-[#160F0C]/70 border-b border-[#F4D77D]/15 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-[#C8963E]/15 border border-[#C8963E]/35 flex items-center justify-center text-[#F4D77D]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
                     </div>
-
-                    <div class="flex flex-col items-center text-center relative z-0 pt-2">
-                        <!-- Avatar dengan Rings Animasi -->
-                        <div class="avatar-wrapper">
-                            <div class="rings ring-1"></div>
-                            <div class="rings ring-2"></div>
-                            <div class="rings ring-3"></div>
-                            <img id="pFoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="avatar-img img-loading">
-                            <div class="absolute bottom-3 right-3 bg-[#C8963E] rounded-full p-1 border-2 border-[#160F0C] z-20 shadow-lg" title="Akun Terverifikasi">
-                                <svg class="w-3 h-3 text-[#160F0C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <span class="bg-[#C8963E]/15 text-[#F4D77D] border border-[#C8963E]/40 text-[10px] px-3.5 py-1 rounded-full font-semibold tracking-widest inline-flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#F4D77D] animate-pulse"></span>
-                                STATUS: TERVERIFIKASI
-                            </span>
-                        </div>
-
-                        <h2 id="pNama" class="text-xl font-bold title-gradient tracking-tight leading-snug mb-5">Memuat Data...</h2>
-
-                        <!-- Detail Biodata -->
-                        <div class="w-full glass-subcard p-4 space-y-3 text-left">
-                            <div class="flex justify-between items-center border-b border-[#F4D77D]/10 pb-2.5">
-                                <div class="flex items-center gap-2 text-[#D5B992]">
-                                    <svg class="w-4 h-4 text-[#C8963E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .883-.393 1.627-1.08 1.998"></path></svg>
-                                    <span class="text-[11px] font-semibold uppercase tracking-wide">NIK / User</span>
-                                </div>
-                                <span id="pNik" class="text-xs font-mono text-[#F4D77D] bg-[#C8963E]/15 border border-[#C8963E]/25 px-2.5 py-0.5 rounded-full">...</span>
-                            </div>
-
-                            <div class="flex justify-between items-center border-b border-[#F4D77D]/10 pb-2.5">
-                                <div class="flex items-center gap-2 text-[#D5B992]">
-                                    <svg class="w-4 h-4 text-[#9D446E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                    <span class="text-[11px] font-semibold uppercase tracking-wide">Sekolah</span>
-                                </div>
-                                <span id="pSekolah" class="text-xs text-[#F4D77D] text-right font-medium truncate w-1/2">...</span>
-                            </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-2 text-[#D5B992]">
-                                    <svg class="w-4 h-4 text-[#C8963E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                    <span class="text-[11px] font-semibold uppercase tracking-wide">WhatsApp</span>
-                                </div>
-                                <span id="pHp" class="text-xs text-[#F4D77D] font-mono">...</span>
-                            </div>
-                        </div>
+                    <div>
+                        <h2 class="title-gradient font-bold text-sm sm:text-base leading-tight">Review Pembahasan Soal</h2>
+                        <p class="text-[11px] text-[#D5B992]/75">Evaluasi kunci jawaban dan penjelasan</p>
                     </div>
                 </div>
-
-                <!-- Pilihan Ruang Ujian PIP & TIU -->
-                <div class="space-y-3.5">
-                    <div class="flex items-center justify-center gap-3 px-2">
-                        <div class="h-px flex-1 bg-[#F4D77D]/15"></div>
-                        <span class="text-[11px] font-semibold uppercase tracking-widest text-[#D5B992]">Pilih Ruang Ujian</span>
-                        <div class="h-px flex-1 bg-[#F4D77D]/15"></div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <!-- Tombol Ujian PIP -->
-                        <button onclick="pilihUjian('PIP')" class="exam-card exam-card-pip p-5 flex flex-col items-center gap-3 group active:scale-95 relative overflow-hidden text-center">
-                            <div class="absolute top-0 right-0 w-16 h-16 bg-[#9D446E]/15 rounded-bl-full -mr-6 -mt-6 transition group-hover:bg-[#9D446E]/30"></div>
-                            <div class="w-14 h-14 rounded-2xl bg-[#9D446E]/20 text-[#F4D77D] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#9D446E] group-hover:text-white transition shadow-inner border border-[#9D446E]/40">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <span class="font-bold text-sm text-[#F4D77D] tracking-wide">UJIAN PIP</span>
-                                <span class="text-[11px] text-[#D5B992]/80 leading-tight mt-1">Ideologi Pancasila</span>
-                            </div>
-                        </button>
-
-                        <!-- Tombol Ujian TIU -->
-                        <button onclick="pilihUjian('TIU')" class="exam-card exam-card-tiu p-5 flex flex-col items-center gap-3 group active:scale-95 relative overflow-hidden text-center">
-                            <div class="absolute top-0 right-0 w-16 h-16 bg-[#C8963E]/15 rounded-bl-full -mr-6 -mt-6 transition group-hover:bg-[#C8963E]/30"></div>
-                            <div class="w-14 h-14 rounded-2xl bg-[#C8963E]/20 text-[#F4D77D] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#C8963E] group-hover:text-[#160F0C] transition shadow-inner border border-[#C8963E]/40">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <span class="font-bold text-sm text-[#F4D77D] tracking-wide">UJIAN TIU</span>
-                                <span class="text-[11px] text-[#D5B992]/80 leading-tight mt-1">Intelegensia Umum</span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
+                <button onclick="tutupPembahasan()"
+                    class="bg-[#2D1E19]/80 hover:bg-[#9D446E] text-[#F4D77D] hover:text-white p-2 rounded-full border border-[#F4D77D]/20 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
 
-            <!-- View 2: Exam Action (PIN & Hasil) -->
-            <div id="examActionView" class="hidden fade-in text-center">
-                <div class="glass-container p-7 relative">
-                    <div class="flex items-center justify-between mb-6">
-                        <button onclick="backToHome()" class="text-[#D5B992] hover:text-[#F4D77D] flex items-center gap-1.5 text-xs font-semibold bg-[#160F0C]/50 px-3 py-1.5 rounded-full border border-[#F4D77D]/15 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            Kembali
-                        </button>
-                        <span id="judulJenisUjian" class="font-bold text-sm title-gradient tracking-widest uppercase">UJIAN ???</span>
-                    </div>
-
-                    <div class="text-center mb-6">
-                        <div id="statusBadgeContainer">
-                            <span id="statusBadge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg border transition-all"></span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <!-- Aksi Masuk Ujian -->
-                        <div class="glass-subcard p-5 transition hover:border-[#C8963E]/40">
-                            <div class="w-12 h-12 bg-[#C8963E]/15 border border-[#C8963E]/30 rounded-full flex items-center justify-center mx-auto mb-3 text-[#F4D77D]">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                            </div>
-                            <p class="text-xs text-[#D5B992] mb-4 leading-relaxed">Masuk menggunakan PIN sesi dari pengawas untuk mulai mengerjakan ujian.</p>
-                            <button id="btnMasukUjian" onclick="reqPin()" class="btn-gold w-full py-3.5 text-sm flex items-center justify-center gap-2">
-                                MASUK RUANG UJIAN
-                            </button>
-                        </div>
-
-                        <!-- Aksi Lihat Hasil -->
-                        <div class="glass-subcard p-5 transition hover:border-[#9D446E]/40">
-                            <p class="text-xs text-[#D5B992] mb-4 leading-relaxed">Lihat skor dan rekap hasil pengerjaan Anda setelah ujian selesai.</p>
-                            <button id="btnLihatHasil" onclick="lihatHasil()" class="btn-outline-gold w-full py-3.5 text-sm flex items-center justify-center gap-2">
-                                LIHAT HASIL UJIAN
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Filter Bar Pembahasan -->
+            <div class="px-5 sm:px-6 py-3 bg-[#160F0C]/45 border-b border-[#F4D77D]/10 flex items-center gap-2 overflow-x-auto shrink-0">
+                <button onclick="filterPembahasan('semua', this)" class="filter-pill active">Semua Soal</button>
+                <button onclick="filterPembahasan('tepat', this)" class="filter-pill">Tepat</button>
+                <button onclick="filterPembahasan('salah', this)" class="filter-pill">Kurang Tepat</button>
             </div>
 
-            <!-- Footer -->
-            <footer class="text-center pt-8 pb-2">
-                <p class="text-[10px] uppercase tracking-widest font-semibold text-[#F4D77D]/45">Sistem CAT Terintegrasi</p>
-                <p class="text-[10px] text-[#D5B992]/40 mt-0.5">TRIPATI DPPI 2026</p>
-            </footer>
-        </main>
+            <!-- Konten Daftar Soal & Pembahasan -->
+            <div id="kontenPembahasan" class="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar space-y-5 bg-[#120C0A]/65">
+                <!-- List Pembahasan akan diisi JS -->
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="p-4 bg-[#160F0C]/75 border-t border-[#F4D77D]/15 text-center shrink-0">
+                <button onclick="tutupPembahasan()" class="btn-outline-gold py-2.5 px-9 text-sm">
+                    Tutup Review
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
         // KONFIGURASI API URL (GANTI DENGAN URL APPS SCRIPT ANDA)
         const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec";
-        
-        let user = {};
-        let selectedExamType = '';
 
-        window.onload = function() {
+        // AMBIL PARAMETER DARI URL VERCEL
+        const urlParams = new URLSearchParams(window.location.search);
+        let jenisUjian = urlParams.get('jenis');
+        if (!jenisUjian || jenisUjian === "undefined") jenisUjian = 'PIP';
+
+        document.getElementById('labelJenisUjian').textContent = jenisUjian;
+        document.getElementById('badgeJenisUjian').textContent = jenisUjian;
+
+        let activeFilter = 'semua';
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "Index.html";
+        }
+
+        function kembaliKeHome() {
+            window.location.href = "Home.html";
+        }
+
+        // --- LOGIKA UTAMA MEMUAT HALAMAN ---
+        function loadHasil() {
             const sid = sessionStorage.getItem('sessionId');
-            
-            // Redirect jika belum login
-            if(!sid) return window.location.href = "index.html";
 
+            // Cek session storage untuk data yang baru disubmit
+            const hRaw = sessionStorage.getItem('hasilUjian_' + jenisUjian);
+            const pRaw = sessionStorage.getItem('peserta');
+            const soalRaw = sessionStorage.getItem('soalData_' + jenisUjian);
+
+            // 1. Jika User BARU SAJA SELESAI UJIAN (Data Lengkap di Session Storage)
+            if (hRaw && pRaw && soalRaw) {
+                renderUI(JSON.parse(pRaw), JSON.parse(hRaw));
+                enablePembahasanButton();
+            }
+            // 2. Jika User LOGIN ULANG atau REFRESH (Ambil Data dari Server)
+            else if (sid) {
+                const pLocal = pRaw ? JSON.parse(pRaw) : null;
+
+                if (pLocal && pLocal.noPeserta) {
+                    fetchServerData(pLocal.noPeserta);
+                } else {
+                    fetch(API_URL, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "getUserSession", sessionId: sid })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            fetchServerData(res.data.nik);
+                        } else {
+                            logout();
+                        }
+                    })
+                    .catch(() => logout());
+                }
+            } else {
+                logout(); // Tidak ada sesi
+            }
+        }
+
+        // Mengambil Statistik Nilai dari Server
+        function fetchServerData(noPeserta) {
             fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "getUserSession", sessionId: sid })
+                body: JSON.stringify({ action: "getDataHasilSiswa", noPeserta: noPeserta, jenis: jenisUjian })
             })
             .then(res => res.json())
             .then(res => {
-                if(res.success) {
-                    user = res.data;
-                    
-                    // Populate Dashboard
-                    document.getElementById('pNama').textContent = user.nama || 'Nama Tidak Ditemukan';
-                    document.getElementById('pSekolah').textContent = user.sekolah || '-';
-                    document.getElementById('pNik').textContent = user.nik || '-';
-                    document.getElementById('pHp').textContent = user.nohp || '-';
-                    
-                    const img = document.getElementById('pFoto');
-                    img.src = user.foto || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
-                    img.onload = () => img.classList.remove('img-loading');
-                } else {
-                    logout();
-                }
-            })
-            .catch(() => logout());
-        };
+                if (res.success) {
+                    const hasilServer = {
+                        nilai: res.nilai,
+                        benar: res.benar,
+                        salah: res.salah,
+                        totalSoal: res.totalSoal
+                    };
+                    const pesertaServer = {
+                        nama: res.nama || '-',
+                        noPeserta: noPeserta
+                    };
+                    sessionStorage.setItem('peserta', JSON.stringify(pesertaServer));
 
-        function logout() {
-            sessionStorage.removeItem('sessionId');
-            sessionStorage.removeItem('peserta');
-            window.location.href = "index.html";
-        }
+                    renderUI(pesertaServer, hasilServer);
 
-        function backToHome() {
-            document.getElementById('examActionView').classList.add('hidden');
-            document.getElementById('homeView').classList.remove('hidden');
-        }
-
-        function pilihUjian(jenis) {
-            selectedExamType = jenis;
-            document.getElementById('judulJenisUjian').textContent = "UJIAN " + jenis;
-
-            Swal.fire({
-                title: 'Memeriksa Status...',
-                text: 'Mohon tunggu sebentar...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-
-            fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "getStudentStatus", jenis: jenis, nik: user.nik })
-            })
-            .then(res => res.json())
-            .then(statusData => {
-                Swal.close();
-                document.getElementById('homeView').classList.add('hidden');
-                document.getElementById('examActionView').classList.remove('hidden');
-                updateDashboardUI(statusData && statusData.success ? statusData.status : 'belum');
-            })
-            .catch(() => {
-                Swal.close();
-                document.getElementById('homeView').classList.add('hidden');
-                document.getElementById('examActionView').classList.remove('hidden');
-                updateDashboardUI('belum');
-            });
-        }
-
-        function updateDashboardUI(statusRaw) {
-            const badge = document.getElementById('statusBadge');
-            const btnLihat = document.getElementById('btnLihatHasil');
-            const status = (statusRaw || '').toLowerCase();
-
-            if (status === 'selesai' || status === 'tidak selesai') {
-                badge.className = "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(157,68,110,0.4)] border bg-[#9D446E]/25 text-[#F4D77D] border-[#9D446E]";
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#9D446E] animate-pulse"></div> STATUS: SELESAI`;
-                btnLihat.disabled = false;
-            } else {
-                badge.className = "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(200,150,62,0.3)] border bg-[#C8963E]/20 text-[#F4D77D] border-[#C8963E]";
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#F4D77D] animate-pulse"></div> STATUS: BELUM UJIAN`;
-                btnLihat.disabled = true;
-            }
-        }
-
-        function lihatHasil() {
-            if(!document.getElementById('btnLihatHasil').disabled) {
-                window.location.href = `Hasil.html?jenis=${selectedExamType}&nik=${user.nik}`;
-            }
-        }
-
-        function reqPin() {
-            Swal.fire({
-                title: 'Masukkan PIN Sesi ' + selectedExamType,
-                text: 'PIN didapatkan dari pengawas ujian',
-                input: 'text',
-                inputAttributes: { autocapitalize: 'off', placeholder: 'Contoh: 1234' },
-                showCancelButton: true,
-                confirmButtonText: 'Masuk Ruangan',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#C8963E',
-                cancelButtonColor: '#4A342D',
-                showLoaderOnConfirm: true,
-                preConfirm: (pin) => {
-                    return fetch(API_URL, {
-                        method: "POST",
-                        body: JSON.stringify({ action: "validateSessionPin", pin: pin, jenis: selectedExamType })
-                    })
-                    .then(r => r.json())
-                    .then(res => {
-                        if(res.success) return true;
-                        else { Swal.showValidationMessage(res.message || 'PIN Tidak Valid!'); return false; }
-                    });
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    window.location.href = `Ujian.html?jenis=${selectedExamType}&nik=${user.nik}`;
-                }
-            });
-        }
-
-        function editProfile() {
-            Swal.fire({
-                title: 'Edit Profil',
-                html: `
-                    <div class="text-left space-y-4 px-1 mt-2">
-                        <div>
-                            <label class="text-xs text-[#D5B992] font-medium">Password Baru</label>
-                            <input id="editPass" type="password" class="swal2-input w-full mx-0 mt-1.5 text-sm" placeholder="Biarkan kosong jika tetap">
-                        </div>
-                        <div>
-                            <label class="text-xs text-[#D5B992] font-medium">Ganti Foto (Opsional, Max 2MB)</label>
-                            <input id="editFoto" type="file" class="w-full mt-2 text-xs text-[#D5B992] file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#C8963E] file:text-[#160F0C] hover:file:bg-[#F4D77D] cursor-pointer" accept="image/*">
-                        </div>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Simpan Perubahan',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#C8963E',
-                cancelButtonColor: '#4A342D',
-                preConfirm: () => {
-                    const pass = document.getElementById('editPass').value;
-                    const fileInput = document.getElementById('editFoto');
-                    const file = fileInput.files[0];
-                    if (!file && !pass) return null;
-                    if (file && file.size > 2 * 1024 * 1024) { Swal.showValidationMessage('Ukuran foto maksimal 2MB!'); return false; }
-                    if (file) {
-                        return new Promise(resolve => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => resolve({ pass: pass, file: { data: e.target.result.split(',')[1], mimeType: file.type, name: file.name } });
-                            reader.readAsDataURL(file);
+                    // Ambil Soal dari Server (untuk pembahasan) jika belum ada di cache
+                    if (!sessionStorage.getItem('soalData_' + jenisUjian)) {
+                        fetch(API_URL, {
+                            method: "POST",
+                            body: JSON.stringify({ action: "loadSoal", jenis: jenisUjian })
+                        })
+                        .then(r => r.json())
+                        .then(dataSoal => {
+                            if (dataSoal.success && dataSoal.data) {
+                                sessionStorage.setItem('soalData_' + jenisUjian, JSON.stringify(dataSoal.data));
+                                enablePembahasanButton();
+                            }
                         });
                     } else {
-                        return { pass: pass, file: null };
+                        enablePembahasanButton();
                     }
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: res.message, confirmButtonColor: '#9D446E' }).then(kembaliKeHome);
                 }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
-                    fetch(API_URL, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            action: "updateProfile",
-                            nik: user.nik,
-                            password: result.value.pass,
-                            fileData: result.value.file
-                        })
-                    })
-                    .then(r => r.json())
-                    .then(res => {
-                        if(res.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: res.message,
-                                confirmButtonColor: '#C8963E'
-                            }).then(() => logout());
-                        } else {
-                            Swal.fire({ icon: 'error', title: 'Gagal', text: res.message, confirmButtonColor: '#9D446E' });
-                        }
-                    });
-                }
+            })
+            .catch(err => {
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message, confirmButtonColor: '#9D446E' }).then(kembaliKeHome);
             });
         }
+
+        function enablePembahasanButton() {
+            const btn = document.getElementById('btnPembahasan');
+            btn.classList.remove('hidden');
+            btn.classList.add('flex');
+        }
+
+        function animateScore(targetNilai) {
+            const el = document.getElementById('nilaiAkhir');
+            const circle = document.getElementById('scoreRingCircle');
+            const numericScore = Math.max(0, Math.min(100, Number(targetNilai) || 0));
+            const circumference = 2 * Math.PI * 68; // ~427.26
+            const targetOffset = circumference - (numericScore / 100) * circumference;
+
+            // Trigger animasi ring SVG
+            requestAnimationFrame(() => {
+                circle.style.strokeDashoffset = targetOffset;
+            });
+
+            // Animasi hitung angka halus
+            const isDecimal = !Number.isInteger(numericScore);
+            const duration = 900;
+            const startTime = performance.now();
+
+            function step(now) {
+                const progress = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = numericScore * eased;
+                el.textContent = isDecimal ? current.toFixed(1) : Math.round(current);
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = targetNilai;
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        function renderUI(p, h) {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('mainContainer').classList.remove('hidden');
+
+            document.getElementById('namaPeserta').textContent = p.nama || '-';
+            document.getElementById('noPeserta').textContent = p.noPeserta || '-';
+
+            const n = h.nilai || 0, b = h.benar, s = h.salah, t = h.totalSoal, kkm = 75;
+            animateScore(n);
+
+            document.getElementById('jumlahBenar').textContent = (b !== undefined) ? b : '-';
+            document.getElementById('jumlahSalah').textContent = (s !== undefined) ? s : '-';
+            document.getElementById('totalSoal').textContent = (t !== undefined) ? t : '-';
+
+            const status = document.getElementById('statusKelulusan');
+            const icon = document.getElementById('iconContainer');
+
+            if (n >= kkm) {
+                status.className = 'rounded-2xl p-4 sm:p-5 mb-6 text-center border border-emerald-400/35 bg-emerald-500/10 text-emerald-300 shadow-[0_8px_25px_-8px_rgba(16,185,129,0.25)]';
+                status.innerHTML = `
+                    <p class="font-extrabold text-base sm:text-lg tracking-wide text-emerald-300 mb-1">SELAMAT, ANDA LULUS!</p>
+                    <p class="text-xs text-[#D5B992]">Nilai Anda telah memenuhi standar kelulusan (KKM ${kkm}). Pertahankan prestasi terbaik Anda.</p>
+                `;
+                icon.className = 'relative z-10 w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-emerald-500 to-emerald-700 border-2 border-[#F4D77D]/60 shadow-[0_0_30px_rgba(16,185,129,0.45)]';
+                icon.innerHTML = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            } else {
+                status.className = 'rounded-2xl p-4 sm:p-5 mb-6 text-center border border-[#9D446E]/60 bg-[#9D446E]/15 text-rose-200 shadow-[0_8px_25px_-8px_rgba(157,68,110,0.3)]';
+                status.innerHTML = `
+                    <p class="font-extrabold text-base sm:text-lg tracking-wide text-[#F4D77D] mb-1">BELUM MEMENUHI KKM</p>
+                    <p class="text-xs text-[#D5B992]">Nilai Anda belum mencapai standar kelulusan KKM ${kkm}. Tetap semangat dan pelajari kembali pembahasannya.</p>
+                `;
+                icon.className = 'relative z-10 w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-[#B55482] to-[#7D2F54] border-2 border-[#F4D77D]/40 shadow-[0_0_30px_rgba(157,68,110,0.45)]';
+                icon.innerHTML = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            }
+        }
+
+        // --- LOGIKA MODAL PEMBAHASAN ---
+        function bukaPembahasan() {
+            document.getElementById('modalPembahasan').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderPembahasan();
+        }
+
+        function tutupPembahasan() {
+            document.getElementById('modalPembahasan').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function filterPembahasan(mode, btnEl) {
+            activeFilter = mode;
+            document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            renderPembahasan();
+        }
+
+        function isImageUrl(url) {
+            if (typeof url !== 'string' || url.trim() === '') return false;
+            return /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|svg|webp)(\?.*)?$|^https?:\/\/(drive\.google\.com\/(uc|thumbnail)\?|lh3\.googleusercontent\.com\/d\/)/i.test(url.trim());
+        }
+
+        function renderGambar(url) {
+            if (!url || url === '-' || url.trim() === '') return '';
+            return `
+                <div class="my-4 text-center">
+                    <img src="${url}"
+                         alt="Gambar Soal"
+                         class="mx-auto rounded-2xl border border-[#F4D77D]/20 max-h-72 object-contain bg-[#160F0C]/60 p-1"
+                         loading="lazy" onerror="this.style.display='none'">
+                </div>
+            `;
+        }
+
+        function renderPembahasanDenganGambar(text) {
+            if (!text || text === '-' || text.trim() === '') {
+                return 'Penjelasan untuk soal ini tidak tersedia.';
+            }
+            return text.replace(
+                /(https?:\/\/[^\s]+\.(png|jpg|jpeg|gif|webp)(\?[^\s]*)?)/gi,
+                (url) => `
+                    <div class="my-4 text-center">
+                        <img src="${url}" class="mx-auto rounded-2xl border border-[#F4D77D]/20 max-h-80 object-contain bg-[#160F0C]/60 p-1" loading="lazy">
+                    </div>`
+            );
+        }
+
+        function renderPembahasan() {
+            const container = document.getElementById('kontenPembahasan');
+            container.innerHTML = '<div class="text-center py-12"><div class="inline-block animate-spin rounded-full h-9 w-9 border-2 border-t-[#F4D77D] border-r-[#C8963E] border-b-transparent border-l-transparent mb-3"></div><p class="text-[#D5B992] text-sm">Memuat data pembahasan...</p></div>';
+
+            const soalDataRaw = sessionStorage.getItem('soalData_' + jenisUjian);
+            const hasilRaw = sessionStorage.getItem('hasilUjian_' + jenisUjian);
+
+            if (!soalDataRaw) {
+                container.innerHTML = '<div class="text-center py-12 text-rose-300 text-sm">Data soal tidak ditemukan. Silakan refresh halaman.</div>';
+                return;
+            }
+
+            const soalData = JSON.parse(soalDataRaw);
+            const hasil = hasilRaw ? JSON.parse(hasilRaw) : {};
+            const jawabanPeserta = hasil.jawabanDetail || {};
+            const statusJawaban = hasil.statusJawaban || {};
+
+            container.innerHTML = '';
+            let renderedCount = 0;
+
+            soalData.forEach((soal, index) => {
+                const userJawab = jawabanPeserta[soal.no] || null;
+                const isCorrect = userJawab
+                    ? (statusJawaban[soal.no] !== undefined ? statusJawaban[soal.no] === true : String(userJawab).trim() === String(soal.kunci).trim())
+                    : false;
+
+                if (activeFilter === 'tepat' && !isCorrect) return;
+                if (activeFilter === 'salah' && isCorrect) return;
+
+                renderedCount++;
+
+                const item = document.createElement('div');
+                item.className = `p-5 sm:p-6 rounded-2xl border transition-all ${
+                    isCorrect
+                        ? 'bg-emerald-500/[0.06] border-emerald-500/25'
+                        : 'bg-[#9D446E]/[0.08] border-[#9D446E]/35'
+                }`;
+
+                item.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-[#2D1E19] text-[#F4D77D] px-3.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border border-[#F4D77D]/20">
+                            Soal ${index + 1}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            ${isCorrect
+                                ? '<span class="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-[11px] font-bold border border-emerald-400/35 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>TEPAT</span>'
+                                : '<span class="bg-[#9D446E]/25 text-rose-200 px-3 py-1 rounded-full text-[11px] font-bold border border-[#9D446E]/50 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>KURANG TEPAT</span>'}
+                        </div>
+                    </div>
+
+                    <p class="text-[#F5EFE6] mb-3 leading-relaxed text-sm sm:text-base font-medium">${soal.pertanyaan}</p>
+                    ${renderGambar(soal.gambar)}
+
+                    <div class="grid grid-cols-1 gap-2.5 mb-5 text-sm">
+                        ${['A', 'B', 'C', 'D'].map(opt => {
+                            const teksOpsi = soal['opsi' + opt];
+                            if (!teksOpsi) return '';
+                            const isKunci = soal.kunci === opt;
+                            const isUserPick = userJawab === opt;
+                            const isiOpsi = isImageUrl(teksOpsi)
+                                ? `<img src="${teksOpsi}" class="max-h-28 rounded-xl border border-[#F4D77D]/20" loading="lazy">`
+                                : `<span class="leading-relaxed">${teksOpsi}</span>`;
+
+                            let optClass = 'bg-[#160F0C]/55 border-[#F4D77D]/12 text-[#D5B992]';
+                            if (isKunci) {
+                                optClass = 'bg-emerald-500/15 border-emerald-400/60 text-emerald-200';
+                            } else if (isUserPick) {
+                                optClass = 'bg-[#9D446E]/20 border-[#9D446E]/75 text-rose-200';
+                            }
+
+                            return `
+                                <div class="p-3.5 rounded-xl border transition-all flex items-start gap-3 ${optClass}">
+                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg text-xs font-bold shrink-0 ${
+                                        isKunci
+                                            ? 'bg-emerald-500 text-[#160F0C]'
+                                            : (isUserPick ? 'bg-[#9D446E] text-white' : 'bg-[#2D1E19] text-[#F4D77D]')
+                                    }">${opt}</span>
+                                    <div class="flex-1">${isiOpsi}</div>
+                                    <span class="ml-auto font-bold text-sm shrink-0">
+                                        ${isKunci ? '✔' : (isUserPick ? '✖' : '')}
+                                    </span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-[#C8963E]/10 border border-[#C8963E]/25">
+                        <p class="text-[#F4D77D] text-[11px] uppercase tracking-wider font-bold mb-2 flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[#C8963E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Pembahasan
+                        </p>
+                        <div class="text-[#F5EFE6]/85 text-xs sm:text-sm leading-relaxed space-y-3">
+                            ${renderPembahasanDenganGambar(soal.pembahasan)}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            if (renderedCount === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-[#D5B992] text-sm">Tidak ada soal pada kategori filter ini.</div>';
+            }
+        }
+
+        window.onload = loadHasil;
     </script>
 </body>
 </html>
