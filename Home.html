@@ -1,199 +1,474 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard - Sistem CAT TRIPATI</title>
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_dppi_512.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        /* Base styles */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Poppins', sans-serif; background: #1A1A1A; color: #FFF; overflow-x: hidden; }
-        
-        /* Dashboard styles */
-        .gold-text { background: linear-gradient(135deg, #FFD700 30%, #B8860B 80%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gold-text-gradient { background: linear-gradient(135deg, #FFD700 30%, #B8860B 80%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass-panel { background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .glass-card { background: rgba(42, 42, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 215, 0, 0.3); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .glass-btn { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 215, 0, 0.2); transition: all 0.3s ease; }
-        .glass-btn:hover { background: rgba(255, 215, 0, 0.1); border-color: #FFD700; transform: translateY(-5px); }
-        .btn-primary { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); color: #1A1A1A !important; transition: all 0.3s ease; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4); }
-        .img-loading { animation: pulse 1.5s infinite; background-color: #2d2d2d; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-        .fade-in { animation: fadeInUp 0.5s ease both; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+            /* Premium Earthy Palette */
+            --bg-main: #160F0C;
+            --glass-bg: rgba(45, 30, 25, 0.4);
+            --glass-bg-strong: rgba(34, 22, 18, 0.72);
+            --glass-border: rgba(244, 215, 125, 0.15);
+            --color-primary: #C8963E;
+            --color-primary-hover: #A87B32;
+            --color-accent: #9D446E;
+            --text-main: #F4D77D;
+            --text-muted: #D5B992;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- BACKGROUND ANIMATED SHAPES --- */
+        .bg-shapes {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(200, 150, 62, 0.25);
+            top: -20%;
+            left: -10%;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(157, 68, 110, 0.25);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -7s;
+        }
+
+        .shape-3 {
+            width: 350px;
+            height: 350px;
+            background: rgba(243, 146, 104, 0.2);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, 40px) scale(1.1); }
+            100% { transform: translate(-40px, 60px) scale(0.9); }
+        }
+
+        /* --- GLASSMORPHISM CONTAINERS --- */
+        .navbar-glass {
+            background: rgba(22, 15, 12, 0.72);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+
+        .glass-subcard {
+            background: rgba(22, 15, 12, 0.45);
+            border: 1px solid rgba(244, 215, 125, 0.1);
+            border-radius: 22px;
+        }
+
+        .exam-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 26px;
+            box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .exam-card-pip:hover {
+            border-color: rgba(157, 68, 110, 0.75);
+            background: rgba(157, 68, 110, 0.16);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -10px rgba(157, 68, 110, 0.35);
+        }
+
+        .exam-card-tiu:hover {
+            border-color: rgba(200, 150, 62, 0.75);
+            background: rgba(200, 150, 62, 0.14);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -10px rgba(200, 150, 62, 0.3);
+        }
+
+        /* --- AVATAR & ANIMATED RINGS --- */
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 14px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar-img {
+            width: 92px;
+            height: 92px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: rgba(22, 15, 12, 0.9);
+            border: 2px solid rgba(244, 215, 125, 0.45);
+            box-shadow: 0 8px 30px rgba(200, 150, 62, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .rings {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(244, 215, 125, 0.12);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .ring-1 {
+            width: 112px;
+            height: 112px;
+            animation: ping-ring 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        .ring-2 {
+            width: 136px;
+            height: 136px;
+            border-color: rgba(244, 215, 125, 0.06);
+            animation: ping-ring 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+            animation-delay: 0.6s;
+        }
+
+        .ring-3 {
+            width: 128px;
+            height: 128px;
+            border-style: dashed;
+            border-color: rgba(244, 215, 125, 0.14);
+            animation: spin-slow 18s linear infinite;
+        }
+
+        @keyframes ping-ring {
+            75%, 100% {
+                transform: translate(-50%, -50%) scale(1.35);
+                opacity: 0;
+            }
+        }
+
+        @keyframes spin-slow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* --- TYPOGRAPHY & BUTTONS --- */
+        .title-gradient {
+            background: linear-gradient(to right, #F4D77D, #C8963E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #F4D77D 0%, #C8963E 100%);
+            color: #160F0C !important;
+            border-radius: 100px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(200, 150, 62, 0.28);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(200, 150, 62, 0.42);
+            filter: brightness(1.05);
+        }
+
+        .btn-outline-gold {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--color-primary);
+            border-radius: 100px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gold:hover:not(:disabled) {
+            background: rgba(200, 150, 62, 0.14);
+            box-shadow: 0 0 20px rgba(200, 150, 62, 0.22);
+        }
+
+        .btn-outline-gold:disabled {
+            opacity: 0.4;
+            border-color: rgba(213, 185, 146, 0.25);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .img-loading {
+            animation: pulse 1.5s infinite;
+            background-color: #2b1d17;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.65s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SweetAlert2 Custom Theme Override */
+        .swal2-popup {
+            background: rgba(34, 22, 18, 0.96) !important;
+            border: 1px solid rgba(244, 215, 125, 0.2) !important;
+            border-radius: 28px !important;
+            color: #F4D77D !important;
+            backdrop-filter: blur(20px);
+        }
+
+        .swal2-html-container, .swal2-validation-message {
+            color: #D5B992 !important;
+        }
+
+        .swal2-validation-message {
+            background: rgba(157, 68, 110, 0.2) !important;
+            border-radius: 12px !important;
+        }
+
+        .swal2-input {
+            background: rgba(22, 15, 12, 0.75) !important;
+            border: 1px solid rgba(244, 215, 125, 0.25) !important;
+            border-radius: 14px !important;
+            color: #F4D77D !important;
+            box-shadow: none !important;
+        }
+
+        .swal2-input:focus {
+            border-color: #C8963E !important;
+        }
     </style>
 </head>
-<body class="bg-[#1A1A1A] min-h-screen text-gray-100">
+<body>
 
-    <div id="dashboardWrapper" class="transition-all duration-500">
+    <!-- Background Shapes (Glassmorphism Blobs) -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div id="dashboardWrapper" class="relative z-10 min-h-screen flex flex-col">
         <!-- Navbar Dashboard -->
-        <div class="sticky top-0 z-50 bg-[#1A1A1A]/90 backdrop-blur-md border-b border-yellow-600/30 p-4 flex justify-between items-center shadow-md">
-            <div class="flex items-center gap-3">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" class="h-10 w-auto drop-shadow-md">
-                <div>
-                    <h1 class="font-bold text-sm gold-text tracking-wide">DASHBOARD PESERTA</h1>
-                    <p class="text-[10px] text-gray-400">TRIPATI 2025</p>
+        <header class="sticky top-0 z-50 navbar-glass px-4 py-3.5 shadow-lg">
+            <div class="max-w-md mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#160F0C]/80 border border-[#F4D77D]/20 p-1 flex items-center justify-center shadow-[0_0_15px_rgba(200,150,62,0.2)]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" alt="Logo DPPI" class="h-full w-full object-contain" onerror="this.src='https://placehold.co/100/160F0C/F4D77D?text=DPPI'">
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm title-gradient tracking-wide leading-tight">DASHBOARD PESERTA</h1>
+                        <p class="text-[11px] text-[#D5B992]/80 font-medium">TRIPATI 2026</p>
+                    </div>
                 </div>
+                <button onclick="logout()" class="text-xs bg-[#9D446E]/20 text-[#F4D77D] px-3.5 py-1.5 rounded-full border border-[#9D446E]/60 hover:bg-[#9D446E] hover:text-white transition font-semibold flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+                    Logout
+                </button>
             </div>
-            <button onclick="logout()" class="text-xs bg-red-600/20 text-red-500 px-3 py-1.5 rounded-full border border-red-600/50 hover:bg-red-600 hover:text-white transition font-semibold flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
-                LOGOUT
-            </button>
-        </div>
+        </header>
 
-        <div class="max-w-md mx-auto p-4 mt-2">
-            <!-- View 1: Home Dashboard (Desain yang Anda Inginkan) -->
+        <main class="w-full max-w-md mx-auto px-5 py-6 flex-1 flex flex-col justify-between">
+            <!-- View 1: Home Dashboard & Pilihan Ruang Ujian -->
             <div id="homeView" class="space-y-6 fade-in">
-                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl border-t border-yellow-500/20">
-                    <div class="absolute top-0 right-0 p-3 z-10">
-                        <button onclick="editProfile()" class="text-xs bg-gray-800/50 hover:bg-yellow-500 hover:text-black text-gray-300 px-3 py-1 rounded-full transition flex items-center gap-1 border border-gray-600">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit
+                <!-- Kartu Profil Peserta -->
+                <div class="glass-container p-6 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <button onclick="editProfile()" class="text-xs bg-[#160F0C]/60 hover:bg-[#C8963E] hover:text-[#160F0C] text-[#D5B992] px-3 py-1.5 rounded-full transition flex items-center gap-1.5 border border-[#F4D77D]/20 font-medium">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            Edit
                         </button>
                     </div>
-                    <div class="flex flex-col items-center text-center relative z-0">
-                        <div class="relative mb-3 group">
-                            <div class="absolute inset-0 bg-yellow-500 blur-lg opacity-20 group-hover:opacity-40 transition rounded-full"></div>
-                            <img id="pFoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-24 h-24 rounded-full border-4 border-[#1A1A1A] ring-2 ring-yellow-500 object-cover shadow-2xl bg-gray-800 img-loading relative z-10">
-                            <div class="absolute bottom-1 right-1 bg-green-500 rounded-full p-1 border-4 border-[#1A1A1A] z-20 shadow-lg" title="Akun Terverifikasi">
-                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+
+                    <div class="flex flex-col items-center text-center relative z-0 pt-2">
+                        <!-- Avatar dengan Rings Animasi -->
+                        <div class="avatar-wrapper">
+                            <div class="rings ring-1"></div>
+                            <div class="rings ring-2"></div>
+                            <div class="rings ring-3"></div>
+                            <img id="pFoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="avatar-img img-loading">
+                            <div class="absolute bottom-3 right-3 bg-[#C8963E] rounded-full p-1 border-2 border-[#160F0C] z-20 shadow-lg" title="Akun Terverifikasi">
+                                <svg class="w-3 h-3 text-[#160F0C]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <span class="bg-green-500/10 text-green-400 border border-green-500/30 text-[10px] px-3 py-1 rounded-full font-bold tracking-widest flex items-center gap-1 mx-auto w-fit">
+
+                        <div class="mb-3">
+                            <span class="bg-[#C8963E]/15 text-[#F4D77D] border border-[#C8963E]/40 text-[10px] px-3.5 py-1 rounded-full font-semibold tracking-widest inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#F4D77D] animate-pulse"></span>
                                 STATUS: TERVERIFIKASI
                             </span>
                         </div>
-                        <h2 id="pNama" class="text-xl font-bold text-white tracking-tight leading-tight mb-4">Memuat Data...</h2>
-                        <div class="w-full bg-black/30 rounded-xl p-4 border border-white/5 space-y-3 text-left">
-                            <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                                <div class="flex items-center gap-2 text-gray-400">
-                                    <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .883-.393 1.627-1.08 1.998"></path></svg>
-                                    <span class="text-xs font-semibold uppercase">NIK / Username</span>
+
+                        <h2 id="pNama" class="text-xl font-bold title-gradient tracking-tight leading-snug mb-5">Memuat Data...</h2>
+
+                        <!-- Detail Biodata -->
+                        <div class="w-full glass-subcard p-4 space-y-3 text-left">
+                            <div class="flex justify-between items-center border-b border-[#F4D77D]/10 pb-2.5">
+                                <div class="flex items-center gap-2 text-[#D5B992]">
+                                    <svg class="w-4 h-4 text-[#C8963E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0c0 .883-.393 1.627-1.08 1.998"></path></svg>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wide">NIK / User</span>
                                 </div>
-                                <span id="pNik" class="text-xs font-mono text-yellow-400 bg-yellow-900/20 px-2 py-0.5 rounded">...</span>
+                                <span id="pNik" class="text-xs font-mono text-[#F4D77D] bg-[#C8963E]/15 border border-[#C8963E]/25 px-2.5 py-0.5 rounded-full">...</span>
                             </div>
-                            <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                                <div class="flex items-center gap-2 text-gray-400">
-                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                    <span class="text-xs font-semibold uppercase">Asal Sekolah</span>
+
+                            <div class="flex justify-between items-center border-b border-[#F4D77D]/10 pb-2.5">
+                                <div class="flex items-center gap-2 text-[#D5B992]">
+                                    <svg class="w-4 h-4 text-[#9D446E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wide">Sekolah</span>
                                 </div>
-                                <span id="pSekolah" class="text-xs text-white text-right font-medium truncate w-1/2">...</span>
+                                <span id="pSekolah" class="text-xs text-[#F4D77D] text-right font-medium truncate w-1/2">...</span>
                             </div>
+
                             <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-2 text-gray-400">
-                                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                    <span class="text-xs font-semibold uppercase">No. WhatsApp</span>
+                                <div class="flex items-center gap-2 text-[#D5B992]">
+                                    <svg class="w-4 h-4 text-[#C8963E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wide">WhatsApp</span>
                                 </div>
-                                <span id="pHp" class="text-xs text-white font-mono">...</span>
+                                <span id="pHp" class="text-xs text-[#F4D77D] font-mono">...</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="goToExamSelection()" class="glass-panel p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-blue-500 hover:bg-blue-500/10 transition group shadow-lg active:scale-95 text-left relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full -mr-8 -mt-8 transition group-hover:bg-blue-500/20"></div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-900 to-blue-800 text-blue-400 flex items-center justify-center group-hover:scale-110 transition shadow-inner border border-blue-700/30">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <span class="font-bold text-sm text-white group-hover:text-blue-400 transition">RUANG UJIAN</span>
-                            <span class="text-[10px] text-gray-500 text-center leading-tight mt-1">Kerjakan soal PIP & TIU</span>
-                        </div>
-                    </button>
-                    <button onclick="navTo('Evaluasi.html')" class="glass-panel p-5 rounded-2xl flex flex-col items-center gap-3 hover:border-green-500 hover:bg-green-500/10 transition group shadow-lg active:scale-95 text-left relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-full -mr-8 -mt-8 transition group-hover:bg-green-500/20"></div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-900 to-green-800 text-green-400 flex items-center justify-center group-hover:scale-110 transition shadow-inner border border-green-700/30">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <span class="font-bold text-sm text-white group-hover:text-green-400 transition">RAPORT EVALUASI</span>
-                            <span class="text-[10px] text-gray-500 text-center leading-tight mt-1">Cek hasil seleksi fisik</span>
-                        </div>
-                    </button>
-                </div>
-                <div class="text-center pt-8 opacity-40">
-                    <p class="text-[10px] uppercase tracking-widest font-bold">Sistem Terintegrasi</p>
-                    <p class="text-[9px]">Badan Kepegawaian & Pengembangan SDM</p>
-                </div>
-            </div>
-            
-            <!-- View 2: Exam Selection -->
-            <div id="examSelectionView" class="hidden fade-in text-center">
-                <div class="glass-card rounded-3xl p-8 shadow-2xl relative">
-                    <button onclick="backToHome()" class="absolute top-4 left-4 text-gray-400 hover:text-white flex items-center gap-1 text-xs">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg> Kembali
-                    </button>
-                    <div class="text-center mb-6 mt-4">
-                        <h2 class="text-xl font-bold text-white mb-1">Halo,</h2>
-                        <h3 id="displayNama" class="text-lg font-bold gold-text-gradient uppercase tracking-widest mb-4">PESERTA</h3>
-                        <p class="text-gray-300 text-sm">Silakan pilih jenis ujian:</p>
+                <!-- Pilihan Ruang Ujian PIP & TIU -->
+                <div class="space-y-3.5">
+                    <div class="flex items-center justify-center gap-3 px-2">
+                        <div class="h-px flex-1 bg-[#F4D77D]/15"></div>
+                        <span class="text-[11px] font-semibold uppercase tracking-widest text-[#D5B992]">Pilih Ruang Ujian</span>
+                        <div class="h-px flex-1 bg-[#F4D77D]/15"></div>
                     </div>
+
                     <div class="grid grid-cols-2 gap-4">
-                        <button onclick="pilihUjian('PIP')" class="glass-btn p-6 rounded-2xl flex flex-col items-center justify-center gap-3 group">
-                            <div class="w-16 h-16 rounded-full bg-red-600/20 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <!-- Tombol Ujian PIP -->
+                        <button onclick="pilihUjian('PIP')" class="exam-card exam-card-pip p-5 flex flex-col items-center gap-3 group active:scale-95 relative overflow-hidden text-center">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-[#9D446E]/15 rounded-bl-full -mr-6 -mt-6 transition group-hover:bg-[#9D446E]/30"></div>
+                            <div class="w-14 h-14 rounded-2xl bg-[#9D446E]/20 text-[#F4D77D] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#9D446E] group-hover:text-white transition shadow-inner border border-[#9D446E]/40">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                             </div>
-                            <span class="font-bold text-white">UJIAN PIP</span>
-                            <span class="text-[10px] text-gray-400">Ideologi Pancasila</span>
+                            <div class="flex flex-col items-center">
+                                <span class="font-bold text-sm text-[#F4D77D] tracking-wide">UJIAN PIP</span>
+                                <span class="text-[11px] text-[#D5B992]/80 leading-tight mt-1">Ideologi Pancasila</span>
+                            </div>
                         </button>
-                        <button onclick="pilihUjian('TIU')" class="glass-btn p-6 rounded-2xl flex flex-col items-center justify-center gap-3 group">
-                            <div class="w-16 h-16 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+
+                        <!-- Tombol Ujian TIU -->
+                        <button onclick="pilihUjian('TIU')" class="exam-card exam-card-tiu p-5 flex flex-col items-center gap-3 group active:scale-95 relative overflow-hidden text-center">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-[#C8963E]/15 rounded-bl-full -mr-6 -mt-6 transition group-hover:bg-[#C8963E]/30"></div>
+                            <div class="w-14 h-14 rounded-2xl bg-[#C8963E]/20 text-[#F4D77D] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#C8963E] group-hover:text-[#160F0C] transition shadow-inner border border-[#C8963E]/40">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                             </div>
-                            <span class="font-bold text-white">UJIAN TIU</span>
-                            <span class="text-[10px] text-gray-400">Intelegensia Umum</span>
+                            <div class="flex flex-col items-center">
+                                <span class="font-bold text-sm text-[#F4D77D] tracking-wide">UJIAN TIU</span>
+                                <span class="text-[11px] text-[#D5B992]/80 leading-tight mt-1">Intelegensia Umum</span>
+                            </div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- View 3: Exam Action (PIN) -->
+            <!-- View 2: Exam Action (PIN & Hasil) -->
             <div id="examActionView" class="hidden fade-in text-center">
-                <div class="glass-card rounded-3xl p-8 shadow-2xl relative">
+                <div class="glass-container p-7 relative">
                     <div class="flex items-center justify-between mb-6">
-                        <button onclick="backToSelection()" class="text-gray-400 hover:text-white flex items-center gap-1 text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg> Kembali
+                        <button onclick="backToHome()" class="text-[#D5B992] hover:text-[#F4D77D] flex items-center gap-1.5 text-xs font-semibold bg-[#160F0C]/50 px-3 py-1.5 rounded-full border border-[#F4D77D]/15 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Kembali
                         </button>
-                        <span id="judulJenisUjian" class="font-bold text-yellow-500 tracking-wider">UJIAN ???</span>
+                        <span id="judulJenisUjian" class="font-bold text-sm title-gradient tracking-widest uppercase">UJIAN ???</span>
                     </div>
+
                     <div class="text-center mb-6">
                         <div id="statusBadgeContainer">
-                            <span id="statusBadge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg border transition-all transform hover:scale-105"></span>
+                            <span id="statusBadge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg border transition-all"></span>
                         </div>
                     </div>
+
                     <div class="space-y-4">
-                        <div class="bg-gray-800/50 rounded-2xl p-4 border border-gray-700 hover:border-yellow-600 transition group">
-                            <div class="mb-3">
-                                <div class="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto text-yellow-500 group-hover:scale-110 transition">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                </div>
+                        <!-- Aksi Masuk Ujian -->
+                        <div class="glass-subcard p-5 transition hover:border-[#C8963E]/40">
+                            <div class="w-12 h-12 bg-[#C8963E]/15 border border-[#C8963E]/30 rounded-full flex items-center justify-center mx-auto mb-3 text-[#F4D77D]">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             </div>
-                            <p class="text-sm text-gray-300 mb-4">Masuk untuk mengerjakan atau memperbaiki ujian.</p>
-                            <button id="btnMasukUjian" onclick="reqPin()" class="btn-primary w-full font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                            <p class="text-xs text-[#D5B992] mb-4 leading-relaxed">Masuk menggunakan PIN sesi dari pengawas untuk mulai mengerjakan ujian.</p>
+                            <button id="btnMasukUjian" onclick="reqPin()" class="btn-gold w-full py-3.5 text-sm flex items-center justify-center gap-2">
                                 MASUK RUANG UJIAN
                             </button>
                         </div>
-                        <div class="bg-gray-800/50 rounded-2xl p-4 border border-gray-700 hover:border-blue-500 transition group">
-                            <p class="text-sm text-gray-300 mb-4">Lihat nilai dan hasil pengerjaan Anda.</p>
-                            <button id="btnLihatHasil" onclick="lihatHasil()" class="bg-blue-600 hover:bg-blue-700 text-white w-full font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
+
+                        <!-- Aksi Lihat Hasil -->
+                        <div class="glass-subcard p-5 transition hover:border-[#9D446E]/40">
+                            <p class="text-xs text-[#D5B992] mb-4 leading-relaxed">Lihat skor dan rekap hasil pengerjaan Anda setelah ujian selesai.</p>
+                            <button id="btnLihatHasil" onclick="lihatHasil()" class="btn-outline-gold w-full py-3.5 text-sm flex items-center justify-center gap-2">
                                 LIHAT HASIL UJIAN
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Footer -->
+            <footer class="text-center pt-8 pb-2">
+                <p class="text-[10px] uppercase tracking-widest font-semibold text-[#F4D77D]/45">Sistem CAT Terintegrasi</p>
+                <p class="text-[10px] text-[#D5B992]/40 mt-0.5">TRIPATI DPPI 2026</p>
+            </footer>
+        </main>
     </div>
 
     <script>
         // KONFIGURASI API URL (GANTI DENGAN URL APPS SCRIPT ANDA)
-        const API_URL = "https://script.google.com/macros/s/AKfycbz_LjAlC49ErfhgGSWI0u2UbZ8Lpyikbxo8hMr435EfinIA5pPxZDws9uaNLrOOfOmb/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbzMNz3nK-4mjMLYVLtsd_aw2TiKV5g5JHS5SbLIRDqgn-J6EFdZJ8vG20RwOJ-4R-3o/exec";
         
         let user = {};
         let selectedExamType = '';
@@ -217,7 +492,6 @@
                     document.getElementById('pNama').textContent = user.nama || 'Nama Tidak Ditemukan';
                     document.getElementById('pSekolah').textContent = user.sekolah || '-';
                     document.getElementById('pNik').textContent = user.nik || '-';
-                    document.getElementById('displayNama').textContent = user.nama || 'PESERTA';
                     document.getElementById('pHp').textContent = user.nohp || '-';
                     
                     const img = document.getElementById('pFoto');
@@ -236,30 +510,21 @@
             window.location.href = "index.html";
         }
 
-        function navTo(page) {
-            window.location.href = page + "?nik=" + user.nik;
-        }
-
-        function goToExamSelection() {
-            document.getElementById('homeView').classList.add('hidden');
-            document.getElementById('examSelectionView').classList.remove('hidden');
-        }
-
         function backToHome() {
-            document.getElementById('examSelectionView').classList.add('hidden');
-            document.getElementById('homeView').classList.remove('hidden');
-        }
-
-        function backToSelection() {
             document.getElementById('examActionView').classList.add('hidden');
-            document.getElementById('examSelectionView').classList.remove('hidden');
+            document.getElementById('homeView').classList.remove('hidden');
         }
 
         function pilihUjian(jenis) {
             selectedExamType = jenis;
             document.getElementById('judulJenisUjian').textContent = "UJIAN " + jenis;
 
-            Swal.fire({ title: 'Memeriksa Status...', text: 'Mohon tunggu sebentar...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1F2937', color: '#fff' });
+            Swal.fire({
+                title: 'Memeriksa Status...',
+                text: 'Mohon tunggu sebentar...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
 
             fetch(API_URL, {
                 method: "POST",
@@ -268,16 +533,16 @@
             .then(res => res.json())
             .then(statusData => {
                 Swal.close();
-                document.getElementById('examSelectionView').classList.add('hidden');
+                document.getElementById('homeView').classList.add('hidden');
                 document.getElementById('examActionView').classList.remove('hidden');
                 updateDashboardUI(statusData && statusData.success ? statusData.status : 'belum');
             })
             .catch(() => {
                 Swal.close();
-                document.getElementById('examSelectionView').classList.add('hidden');
+                document.getElementById('homeView').classList.add('hidden');
                 document.getElementById('examActionView').classList.remove('hidden');
-                updateDashboardUI('belum'); 
-            }); 
+                updateDashboardUI('belum');
+            });
         }
 
         function updateDashboardUI(statusRaw) {
@@ -286,17 +551,13 @@
             const status = (statusRaw || '').toLowerCase();
 
             if (status === 'selesai' || status === 'tidak selesai') {
-                badge.className = "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(220,38,38,0.5)] border bg-red-900/40 text-red-200 border-red-500 transition-all transform hover:scale-105";
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> STATUS: SELESAI`;
+                badge.className = "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(157,68,110,0.4)] border bg-[#9D446E]/25 text-[#F4D77D] border-[#9D446E]";
+                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#9D446E] animate-pulse"></div> STATUS: SELESAI`;
                 btnLihat.disabled = false;
-                btnLihat.classList.remove('bg-gray-600', 'cursor-not-allowed', 'opacity-50');
-                btnLihat.classList.add('bg-blue-600', 'hover:bg-blue-700');
             } else {
-                badge.className = "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(34,197,94,0.5)] border bg-green-900/40 text-green-200 border-green-500 transition-all transform hover:scale-105";
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> STATUS: BELUM UJIAN`;
+                badge.className = "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(200,150,62,0.3)] border bg-[#C8963E]/20 text-[#F4D77D] border-[#C8963E]";
+                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#F4D77D] animate-pulse"></div> STATUS: BELUM UJIAN`;
                 btnLihat.disabled = true;
-                btnLihat.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                btnLihat.classList.add('bg-gray-600', 'cursor-not-allowed', 'opacity-50');
             }
         }
 
@@ -312,9 +573,12 @@
                 text: 'PIN didapatkan dari pengawas ujian',
                 input: 'text',
                 inputAttributes: { autocapitalize: 'off', placeholder: 'Contoh: 1234' },
-                showCancelButton: true, confirmButtonText: 'Masuk Ruangan',
+                showCancelButton: true,
+                confirmButtonText: 'Masuk Ruangan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#C8963E',
+                cancelButtonColor: '#4A342D',
                 showLoaderOnConfirm: true,
-                background: '#1F2937', color: '#fff',
                 preConfirm: (pin) => {
                     return fetch(API_URL, {
                         method: "POST",
@@ -328,7 +592,6 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
-                    // Pindah ke file Ujian.html yang murni ujian
                     window.location.href = `Ujian.html?jenis=${selectedExamType}&nik=${user.nik}`;
                 }
             });
@@ -337,8 +600,23 @@
         function editProfile() {
             Swal.fire({
                 title: 'Edit Profil',
-                html: `<div class="text-left space-y-3 px-1"><div><label class="text-xs text-gray-400">Password Baru</label><input id="editPass" type="password" class="swal2-input w-full mx-0 mt-1 bg-gray-700 text-white border-gray-600 focus:border-yellow-500" placeholder="Biarkan kosong jika tetap"></div><div><label class="text-xs text-gray-400">Ganti Foto (Opsional, Max 2MB)</label><input id="editFoto" type="file" class="w-full mt-1 text-sm text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:bg-yellow-600 file:text-black hover:file:bg-yellow-500 cursor-pointer" accept="image/*"></div></div>`,
-                background: '#1F2937', color: '#fff', showCancelButton: true, confirmButtonText: 'Simpan Perubahan', confirmButtonColor: '#B8860B',
+                html: `
+                    <div class="text-left space-y-4 px-1 mt-2">
+                        <div>
+                            <label class="text-xs text-[#D5B992] font-medium">Password Baru</label>
+                            <input id="editPass" type="password" class="swal2-input w-full mx-0 mt-1.5 text-sm" placeholder="Biarkan kosong jika tetap">
+                        </div>
+                        <div>
+                            <label class="text-xs text-[#D5B992] font-medium">Ganti Foto (Opsional, Max 2MB)</label>
+                            <input id="editFoto" type="file" class="w-full mt-2 text-xs text-[#D5B992] file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#C8963E] file:text-[#160F0C] hover:file:bg-[#F4D77D] cursor-pointer" accept="image/*">
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan Perubahan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#C8963E',
+                cancelButtonColor: '#4A342D',
                 preConfirm: () => {
                     const pass = document.getElementById('editPass').value;
                     const fileInput = document.getElementById('editFoto');
@@ -346,12 +624,18 @@
                     if (!file && !pass) return null;
                     if (file && file.size > 2 * 1024 * 1024) { Swal.showValidationMessage('Ukuran foto maksimal 2MB!'); return false; }
                     if (file) {
-                        return new Promise(resolve => { const reader = new FileReader(); reader.onload = (e) => resolve({ pass: pass, file: { data: e.target.result.split(',')[1], mimeType: file.type, name: file.name } }); reader.readAsDataURL(file); });
-                    } else { return { pass: pass, file: null }; }
+                        return new Promise(resolve => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve({ pass: pass, file: { data: e.target.result.split(',')[1], mimeType: file.type, name: file.name } });
+                            reader.readAsDataURL(file);
+                        });
+                    } else {
+                        return { pass: pass, file: null };
+                    }
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
-                    Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: '#1F2937', color: '#fff', allowOutsideClick: false });
+                    Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
                     fetch(API_URL, {
                         method: "POST",
                         body: JSON.stringify({
@@ -363,8 +647,16 @@
                     })
                     .then(r => r.json())
                     .then(res => {
-                        if(res.success) Swal.fire({ icon: 'success', title: 'Berhasil!', text: res.message, background: '#1F2937', color: '#fff' }).then(() => logout());
-                        else Swal.fire('Gagal', res.message, 'error');
+                        if(res.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: res.message,
+                                confirmButtonColor: '#C8963E'
+                            }).then(() => logout());
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Gagal', text: res.message, confirmButtonColor: '#9D446E' });
+                        }
                     });
                 }
             });
