@@ -288,9 +288,418 @@
         .swal2-input:focus {
             border-color: #C8963E !important;
         }
+
+        /* ============================================================
+           CINEMATIC PORTAL TRANSITION OVERLAY (TRIPATI -> BHINNEKASTRA)
+           ============================================================ */
+        #bhinnekastraPortalOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #F9F1E2;
+            background-image: radial-gradient(circle at 50% 0%, rgba(163, 73, 108, 0.14) 0%, transparent 65%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0;
+            clip-path: circle(0% at var(--portal-x, 50%) var(--portal-y, 50%));
+            transition:
+                clip-path 0.85s cubic-bezier(0.76, 0, 0.24, 1),
+                opacity 0.25s ease;
+        }
+
+        #bhinnekastraPortalOverlay.active {
+            pointer-events: auto;
+            opacity: 1;
+            clip-path: circle(155% at var(--portal-x, 50%) var(--portal-y, 50%));
+        }
+
+        .bhinn-bg-shapes {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bhinn-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(85px);
+            opacity: 0.65;
+            animation: bhinnBlobFloat 12s infinite alternate ease-in-out;
+        }
+
+        .bhinn-blob-1 {
+            width: 480px;
+            height: 480px;
+            background: rgba(163, 73, 108, 0.24);
+            top: -18%;
+            left: -12%;
+        }
+
+        .bhinn-blob-2 {
+            width: 440px;
+            height: 440px;
+            background: rgba(223, 190, 141, 0.55);
+            bottom: -14%;
+            right: -12%;
+            animation-delay: -4s;
+        }
+
+        .bhinn-blob-3 {
+            width: 340px;
+            height: 340px;
+            background: rgba(200, 150, 62, 0.22);
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -7s;
+        }
+
+        @keyframes bhinnBlobFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(45px, 30px) scale(1.12); }
+            100% { transform: translate(-35px, 45px) scale(0.92); }
+        }
+
+        .bhinn-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .rose-spark {
+            position: absolute;
+            bottom: -20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #A3496C 0%, rgba(223, 190, 141, 0) 70%);
+            opacity: 0;
+            animation: riseRoseSpark linear infinite;
+        }
+
+        @keyframes riseRoseSpark {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.7; }
+            80% { opacity: 0.35; }
+            100% { transform: translateY(-105vh) scale(1.2); opacity: 0; }
+        }
+
+        .bhinn-portal-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 410px;
+            padding: 42px 28px 36px 28px;
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid #DFBE8D;
+            box-shadow:
+                0 28px 65px -15px rgba(84, 58, 42, 0.18),
+                0 0 45px rgba(163, 73, 108, 0.12),
+                inset 0 1px 1px rgba(255, 255, 255, 0.85);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(28px) scale(0.92);
+            transition:
+                opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.25s,
+                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.25s,
+                filter 0.4s ease;
+        }
+
+        #bhinnekastraPortalOverlay.active .bhinn-portal-card {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        #bhinnekastraPortalOverlay.warping .bhinn-portal-card {
+            opacity: 0;
+            transform: scale(1.12);
+            filter: blur(10px);
+            transition: opacity 0.38s ease, transform 0.38s ease, filter 0.38s ease;
+        }
+
+        .bhinn-logo-stage {
+            position: relative;
+            width: 128px;
+            height: 128px;
+            margin: 0 auto 24px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bhinn-logo-core {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: #FFFFFF;
+            border: 2px solid #DFBE8D;
+            padding: 8px;
+            position: relative;
+            z-index: 3;
+            box-shadow: 0 10px 30px rgba(163, 73, 108, 0.24);
+            animation: bhinnLogoBreathe 2.4s ease-in-out infinite;
+        }
+
+        @keyframes bhinnLogoBreathe {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 26px rgba(163, 73, 108, 0.22); }
+            50% { transform: scale(1.05); box-shadow: 0 14px 40px rgba(163, 73, 108, 0.4); }
+        }
+
+        .bhinn-ring {
+            position: absolute;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .bhinn-ring-ping-1 {
+            width: 112px;
+            height: 112px;
+            border: 1.5px solid rgba(163, 73, 108, 0.35);
+            animation: bhinnPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        .bhinn-ring-ping-2 {
+            width: 144px;
+            height: 144px;
+            border: 1px solid rgba(200, 150, 62, 0.35);
+            animation: bhinnPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite 0.7s;
+        }
+
+        .bhinn-ring-orbit {
+            width: 124px;
+            height: 124px;
+            border: 1.5px dashed rgba(163, 73, 108, 0.28);
+            animation: bhinnSpin 10s linear infinite;
+        }
+
+        .bhinn-ring-arc {
+            width: 102px;
+            height: 102px;
+            border: 2px solid transparent;
+            border-top-color: #A3496C;
+            border-right-color: rgba(223, 190, 141, 0.75);
+            animation: bhinnSpinReverse 1.6s linear infinite;
+        }
+
+        @keyframes bhinnPing {
+            0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(1.55); opacity: 0; }
+        }
+
+        @keyframes bhinnSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes bhinnSpinReverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+
+        .bhinn-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 100px;
+            background: rgba(163, 73, 108, 0.1);
+            border: 1px solid rgba(163, 73, 108, 0.28);
+            color: #A3496C;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .bhinn-title-shimmer {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            margin: 0 0 8px 0;
+            background: linear-gradient(90deg, #543A2A 0%, #A3496C 35%, #C8963E 50%, #A3496C 65%, #543A2A 100%);
+            background-size: 220% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: bhinnTextShimmer 2.6s linear infinite;
+        }
+
+        @keyframes bhinnTextShimmer {
+            to { background-position: 220% center; }
+        }
+
+        .bhinn-user-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 100%;
+            padding: 5px 14px;
+            border-radius: 100px;
+            background: #EFE4D2;
+            border: 1px solid #DFBE8D;
+            color: #543A2A;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 22px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bhinn-progress-track {
+            width: 100%;
+            height: 7px;
+            background: #EFE4D2;
+            border-radius: 100px;
+            overflow: hidden;
+            border: 1px solid #DFBE8D;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .bhinn-progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 100px;
+            background: linear-gradient(90deg, #DFBE8D 0%, #A3496C 55%, #853A55 100%);
+            box-shadow: 0 0 14px rgba(163, 73, 108, 0.45);
+            transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bhinn-progress-fill::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transform: translateX(-100%);
+            animation: bhinnBarShimmer 1.2s infinite;
+        }
+
+        @keyframes bhinnBarShimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        .bhinn-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            gap: 8px;
+        }
+
+        #bhinnStatusText {
+            color: #886144;
+            font-weight: 500;
+            text-align: left;
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+
+        #bhinnStatusText.switching {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+
+        #bhinnPercentText {
+            color: #A3496C;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+
+        .bhinn-steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 22px;
+        }
+
+        .bhinn-step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 100px;
+            background: rgba(163, 73, 108, 0.22);
+            transition: all 0.35s ease;
+        }
+
+        .bhinn-step-dot.active {
+            width: 26px;
+            background: linear-gradient(90deg, #A3496C, #C8963E);
+            box-shadow: 0 0 10px rgba(163, 73, 108, 0.45);
+        }
+
+        .bhinn-step-dot.done {
+            background: #A3496C;
+        }
+
+        @media (max-width: 480px) {
+            .bhinn-portal-card { padding: 34px 22px 28px 22px; }
+            .bhinn-title-shimmer { font-size: 21px; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- CINEMATIC TRANSITION OVERLAY KEMBALI KE PORTAL BHINNEKASTRA -->
+    <div id="bhinnekastraPortalOverlay" aria-hidden="true">
+        <div class="bhinn-bg-shapes">
+            <div class="bhinn-blob bhinn-blob-1"></div>
+            <div class="bhinn-blob bhinn-blob-2"></div>
+            <div class="bhinn-blob bhinn-blob-3"></div>
+        </div>
+        <div class="bhinn-particles" id="bhinnParticles"></div>
+
+        <div class="bhinn-portal-card">
+            <div class="bhinn-logo-stage">
+                <div class="bhinn-ring bhinn-ring-ping-1"></div>
+                <div class="bhinn-ring bhinn-ring-ping-2"></div>
+                <div class="bhinn-ring bhinn-ring-orbit"></div>
+                <div class="bhinn-ring bhinn-ring-arc"></div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Logo_DPPI.png" alt="Logo DPPI" class="bhinn-logo-core" onerror="this.src='https://placehold.co/100/F9F1E2/A3496C?text=DPPI'">
+            </div>
+
+            <div class="bhinn-badge">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#A3496C] animate-pulse"></span>
+                <span>Kembali ke Portal Utama</span>
+            </div>
+
+            <h2 class="bhinn-title-shimmer">PORTAL BHINNEKASTRA</h2>
+
+            <div class="bhinn-user-chip">
+                <svg class="w-3.5 h-3.5 text-[#A3496C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span id="bhinnUserLabel" class="truncate">Peserta DPPI Kota Yogyakarta</span>
+            </div>
+
+            <div class="bhinn-progress-track">
+                <div class="bhinn-progress-fill" id="bhinnProgressFill"></div>
+            </div>
+
+            <div class="bhinn-status-row">
+                <span id="bhinnStatusText">Menutup sesi Portal TRIPATI...</span>
+                <span id="bhinnPercentText">0%</span>
+            </div>
+
+            <div class="bhinn-steps">
+                <span class="bhinn-step-dot active" id="bStep1"></span>
+                <span class="bhinn-step-dot" id="bStep2"></span>
+                <span class="bhinn-step-dot" id="bStep3"></span>
+            </div>
+        </div>
+    </div>
 
     <!-- Background Shapes (Glassmorphism Blobs) -->
     <div class="bg-shapes">
@@ -312,7 +721,7 @@
                         <p class="text-[11px] text-[#D5B992]/80 font-medium">TRIPATI 2026</p>
                     </div>
                 </div>
-                <button onclick="logout()" class="text-xs bg-[#9D446E]/20 text-[#F4D77D] px-3.5 py-1.5 rounded-full border border-[#9D446E]/60 hover:bg-[#9D446E] hover:text-white transition font-semibold flex items-center gap-1.5">
+                <button onclick="logout(event)" class="text-xs bg-[#9D446E]/20 text-[#F4D77D] px-3.5 py-1.5 rounded-full border border-[#9D446E]/60 hover:bg-[#9D446E] hover:text-white transition font-semibold flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
                     Logout
                 </button>
@@ -473,6 +882,18 @@
 
         let user = {};
         let selectedExamType = '';
+        let isPortalTransitioning = false;
+
+        // Reset overlay jika user kembali menggunakan tombol Back browser (bfcache)
+        window.addEventListener('pageshow', () => {
+            isPortalTransitioning = false;
+            const overlay = document.getElementById('bhinnekastraPortalOverlay');
+            if (overlay) {
+                overlay.classList.remove('active', 'warping');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+        });
 
         // Konversi URL foto (sama seperti logika detailfix8.html)
         function resolveProfilePhoto(rawUrl, nama) {
@@ -532,15 +953,135 @@
                     };
                     img.src = resolveProfilePhoto(rawFoto, namaUser);
                 } else {
-                    logout();
+                    logout(null, true);
                 }
             })
-            .catch(() => logout());
+            .catch(() => logout(null, true));
         };
 
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = BHINNEKASTRA_DETAIL_URL;
+        // Generate partikel cahaya rose-gold di layar transisi Bhinnekastra
+        function spawnRoseParticles() {
+            const container = document.getElementById('bhinnParticles');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 0; i < 22; i++) {
+                const spark = document.createElement('span');
+                spark.className = 'rose-spark';
+                const size = Math.random() * 6 + 3;
+                spark.style.width = size + 'px';
+                spark.style.height = size + 'px';
+                spark.style.left = (Math.random() * 100) + '%';
+                spark.style.animationDuration = (Math.random() * 3.5 + 3) + 's';
+                spark.style.animationDelay = (Math.random() * 1.8) + 's';
+                container.appendChild(spark);
+            }
+        }
+
+        function animateBhinnPercent(from, to, duration) {
+            const el = document.getElementById('bhinnPercentText');
+            const start = performance.now();
+            function frame(now) {
+                const p = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(from + (to - from) * eased) + '%';
+                if (p < 1) requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+
+        function setBhinnPortalStatus(text) {
+            const el = document.getElementById('bhinnStatusText');
+            el.classList.add('switching');
+            setTimeout(() => {
+                el.textContent = text;
+                el.classList.remove('switching');
+            }, 180);
+        }
+
+        // Fungsi Logout dengan Transisi Cinematic ke Portal Bhinnekastra
+        function logout(e, immediate = false) {
+            if (isPortalTransitioning) return;
+            isPortalTransitioning = true;
+
+            if (immediate) {
+                sessionStorage.clear();
+                window.location.href = BHINNEKASTRA_DETAIL_URL;
+                return;
+            }
+
+            const overlay = document.getElementById('bhinnekastraPortalOverlay');
+            const progressFill = document.getElementById('bhinnProgressFill');
+            const userLabel = document.getElementById('bhinnUserLabel');
+            const step1 = document.getElementById('bStep1');
+            const step2 = document.getElementById('bStep2');
+            const step3 = document.getElementById('bStep3');
+
+            // Tentukan titik asal ekspansi portal dari koordinat klik tombol
+            let originX = '50%';
+            let originY = '50%';
+            if (e && e.clientX && e.clientY) {
+                originX = e.clientX + 'px';
+                originY = e.clientY + 'px';
+            } else if (e && e.currentTarget) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                originX = (rect.left + rect.width / 2) + 'px';
+                originY = (rect.top + rect.height / 2) + 'px';
+            }
+
+            overlay.style.setProperty('--portal-x', originX);
+            overlay.style.setProperty('--portal-y', originY);
+            userLabel.textContent = user.nama || 'Peserta DPPI Kota Yogyakarta';
+
+            // Reset state awal
+            progressFill.style.width = '0%';
+            document.getElementById('bhinnPercentText').textContent = '0%';
+            document.getElementById('bhinnStatusText').textContent = 'Menutup sesi Portal TRIPATI...';
+            step1.className = 'bhinn-step-dot active';
+            step2.className = 'bhinn-step-dot';
+            step3.className = 'bhinn-step-dot';
+
+            spawnRoseParticles();
+            document.body.style.overflow = 'hidden';
+
+            // Fase 1: Ekspansi Portal Radial
+            overlay.setAttribute('aria-hidden', 'false');
+            requestAnimationFrame(() => {
+                overlay.classList.add('active');
+            });
+
+            // Fase 2: Tahap 1 (0% -> 38%)
+            setTimeout(() => {
+                progressFill.style.width = '38%';
+                animateBhinnPercent(0, 38, 550);
+            }, 320);
+
+            // Fase 3: Tahap 2 (38% -> 76%)
+            setTimeout(() => {
+                step1.className = 'bhinn-step-dot done';
+                step2.className = 'bhinn-step-dot active';
+                setBhinnPortalStatus('Menyiapkan halaman profil Bhinnekastra...');
+                progressFill.style.width = '76%';
+                animateBhinnPercent(38, 76, 600);
+            }, 1000);
+
+            // Fase 4: Tahap 3 (76% -> 100%)
+            setTimeout(() => {
+                step2.className = 'bhinn-step-dot done';
+                step3.className = 'bhinn-step-dot active';
+                setBhinnPortalStatus('Membuka Portal Bhinnekastra 2026...');
+                progressFill.style.width = '100%';
+                animateBhinnPercent(76, 100, 500);
+            }, 1700);
+
+            // Fase 5: Warp Masuk ke Dunia Bhinnekastra & Redirect
+            setTimeout(() => {
+                overlay.classList.add('warping');
+            }, 2280);
+
+            setTimeout(() => {
+                sessionStorage.clear();
+                window.location.href = BHINNEKASTRA_DETAIL_URL;
+            }, 2620);
         }
 
         function backToHome() {
